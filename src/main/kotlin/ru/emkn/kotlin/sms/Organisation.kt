@@ -1,8 +1,10 @@
 package ru.emkn.kotlin.sms
 
-class Organisation (val name: String, var members: MutableList<Participant> = mutableListOf()){
+class Organisation(var name: String, val members: MutableList<Participant> = mutableListOf()) {
 
-    fun addMember(participant: Participant){
+    constructor() : this("")
+
+    fun addMember(participant: Participant) {
         this.members.add(participant)
     }
 
