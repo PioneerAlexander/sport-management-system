@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import java.io.File
 
 fun applicationToOrg(fileName: String): Organisation {
     //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
@@ -36,8 +37,8 @@ fun competitionToStartLists(comp: Competition) {
 
 fun main(args: Array<String>) {
     val a = mutableListOf<Organisation>()
-    for (i in 1..15) {
-        a.add(applicationToOrg("sample-data/applications/application$i.csv"))
+    for (file in File("sample-data/applications").listFiles()) {
+        a.add(applicationToOrg("sample-data/applications"+ "/"+file.name))
     }
     val comp = Competition("Test", "19.11.2021", a.toList())
     competitionToStartLists(comp)
