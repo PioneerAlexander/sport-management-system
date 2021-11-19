@@ -1,7 +1,5 @@
 package ru.emkn.kotlin.sms
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import java.io.File
 
 class Competition (val name: String, val date: String, val orgs: List<Organisation>){
     val participants: List<Participant>
