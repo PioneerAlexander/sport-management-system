@@ -20,9 +20,12 @@ fun applicationToOrg(fileName: String): Organisation {
 
 fun competitionToStartLists(comp: Competition) {
     val mappedParticipants = comp.participants.groupBy { it.ageGroup }
-    val numberLength = comp.participants.size.toString().length
+    val numberLength = comp.size.toString().length
     var startNumber = 0
-    var time = Clock.System.now()
+    var time = LocalDateTime(
+        2021, 11, 21,
+        12, 0, 0, 0
+    ).toInstant(TimeZone.UTC)
     for ((index, category) in mappedParticipants.keys.withIndex()) {
         csvWriter().open("testData/testStartProtocol$index.csv") {
             writeRow(
@@ -36,10 +39,10 @@ fun competitionToStartLists(comp: Competition) {
                 writeRow(
                     listOf(
                         participantNumber, participant.surname, participant.name,
-                        participant.birthYear, participant.sportsCategory, "${time}"
+                        participant.birthYear, participant.sportsCategory, time.toString().substring(11..18)
                     )
                 )
-                time = time.plus(DateTimePeriod(minutes = 1), TimeZone.currentSystemDefault())
+                time = time.plus(DateTimePeriod(minutes = 1), TimeZone.UTC)
                 startNumber += 1
             }
         }
