@@ -3,6 +3,7 @@ package ru.emkn.kotlin.sms
 import java.io.File
 
 class Competition (val name: String, val date: String, var orgs: List<Organisation> = listOf()){
+
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 
@@ -16,4 +17,6 @@ class Competition (val name: String, val date: String, var orgs: List<Organisati
         }
         this.orgs = allOrgs
     }
+    
+    val sportClasses = getSportClasses()
 }
