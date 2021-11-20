@@ -3,6 +3,8 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.io.File
+import kotlinx.datetime.*
+
 
 fun applicationToOrg(fileName: String): Organisation {
     //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
@@ -18,29 +20,51 @@ fun applicationToOrg(fileName: String): Organisation {
 
 fun competitionToStartLists(comp: Competition) {
     val mappedParticipants = comp.participants.groupBy { it.ageGroup }
+    val numberLength = comp.participants.size.toString().length
+    var startNumber = 0
+    var time = Clock.System.now()
     for ((index, category) in mappedParticipants.keys.withIndex()) {
         csvWriter().open("testData/testStartProtocol$index.csv") {
             writeRow(
                 listOf(category, "", "", "", "", "")
             )
-            for ((number, participant) in mappedParticipants[category]!!.withIndex()) {
+            for (participant in mappedParticipants[category]!!.shuffled()) {
+                var participantNumber = startNumber.toString()
+                while (participantNumber.length < numberLength) {
+                    participantNumber = "0$participantNumber"
+                }
                 writeRow(
                     listOf(
-                        "$index$number", participant.surname, participant.name,
-                        participant.birthYear, participant.sportsCategory, "time"
+                        participantNumber, participant.surname, participant.name,
+                        participant.birthYear, participant.sportsCategory, "${time}"
                     )
                 )
+                time = time.plus(DateTimePeriod(minutes = 1), TimeZone.currentSystemDefault())
+                startNumber += 1
             }
         }
     }
 }
 
-fun main(args: Array<String>) {
-    val a = mutableListOf<Organisation>()
-    for (file in File("sample-data/applications").listFiles()) {
-        a.add(applicationToOrg("sample-data/applications"+ "/"+file.name))
+fun makeCompetition(pathEvent: String): Competition {
+    var eventName = ""
+    var eventDate = ""  //maybe kotlinx-datetime
+    csvReader().open(pathEvent) {
+        readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
+            //check for only 1 element
+            eventName = row["Название"]!!
+            eventDate = row["Дата"]!!
+        }
     }
-    val comp = Competition("Test", "19.11.2021", a.toList())
+    return Competition(eventName, eventDate)
+}
+
+
+fun main(args: Array<String>) {
+    val pathEvent = "sample-data/event.csv"
+    val pathApplications = "sample-data/applications"
+    val comp = makeCompetition(pathEvent)
+    comp.addOrganisationsToCompetition(pathApplications)
     competitionToStartLists(comp)
 
 
