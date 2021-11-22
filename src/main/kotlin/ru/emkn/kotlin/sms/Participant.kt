@@ -10,6 +10,8 @@ class Participant(
 
     companion object{
         val mapOfStringDistance = getSportClasses()
+        val mapFromNumberToParticipant: Map<String, Participant> = TODO()
+
     }
 
     var startNumber: String = ""
@@ -19,6 +21,14 @@ class Participant(
     }
     val checkpoints
         get() = mapOfStringDistance[ageGroup]?.checkpoints
+
+    fun isNotCheated(): Boolean{
+        TODO()
+    }
+
+
+
+
 
 
 }
