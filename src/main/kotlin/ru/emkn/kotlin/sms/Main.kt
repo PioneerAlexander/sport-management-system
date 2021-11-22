@@ -2,6 +2,9 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
+import java.io.File
+import kotlinx.datetime.*
+
 
 fun applicationToOrg(fileName: String): Organisation {
     //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
@@ -15,32 +18,27 @@ fun applicationToOrg(fileName: String): Organisation {
     return org
 }
 
-fun competitionToStartLists(comp: Competition) {
-    val mappedParticipants = comp.participants.groupBy { it.ageGroup }
-    for ((index, category) in mappedParticipants.keys.withIndex()) {
-        csvWriter().open("testData/testStartProtocol$index.csv") {
-            writeRow(
-                listOf(category, "", "", "", "", "")
-            )
-            for ((number, participant) in mappedParticipants[category]!!.withIndex()) {
-                writeRow(
-                    listOf(
-                        "$index$number", participant.surname, participant.name,
-                        participant.birthYear, participant.sportsCategory, "time"
-                    )
-                )
-            }
+
+fun makeCompetition(pathEvent: String): Competition {
+    var eventName = ""
+    var eventDate = ""  //maybe kotlinx-datetime
+    csvReader().open(pathEvent) {
+        readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
+            //check for only 1 element
+            eventName = row["Название"]!!
+            eventDate = row["Дата"]!!
         }
     }
+    return Competition(eventName, eventDate)
 }
 
+
 fun main(args: Array<String>) {
-    val a = mutableListOf<Organisation>()
-    for (i in 1..15) {
-        a.add(applicationToOrg("sample-data/applications/application$i.csv"))
-    }
-    val comp = Competition("Test", "19.11.2021", a.toList())
-    competitionToStartLists(comp)
+    val pathEvent = "sample-data/event.csv"
+    val pathApplications = "sample-data/applications"
+    val comp = makeCompetition(pathEvent)
+    comp.addOrganisationsToCompetition(pathApplications)
+    Competition.competitionToStartLists(comp)
 
 
 }

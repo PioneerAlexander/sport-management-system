@@ -7,9 +7,13 @@ class Participant(
     val birthYear: String?,
     val sportsCategory: String?,
 ) {
+
     companion object{
         val mapOfStringDistance = getSportClasses()
     }
+
+    var startNumber: String = ""
+
     override fun toString(): String {
         return "${this.surname} ${this.name}"
     }
