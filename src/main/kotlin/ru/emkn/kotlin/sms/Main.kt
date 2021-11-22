@@ -1,9 +1,11 @@
 package ru.emkn.kotlin.sms
-
+import mu.KotlinLogging
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.io.File
 import kotlinx.datetime.*
+
+val logger = KotlinLogging.logger { }
 
 fun getOrEmptyString(string: String?): String = string ?: ""
 
