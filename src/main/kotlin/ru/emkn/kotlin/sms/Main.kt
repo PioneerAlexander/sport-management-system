@@ -18,36 +18,6 @@ fun applicationToOrg(fileName: String): Organisation {
     return org
 }
 
-fun competitionToStartLists(comp: Competition) {
-    val mappedParticipants = comp.participants.groupBy { it.ageGroup }
-    val numberLength = comp.size.toString().length
-    var startNumber = 0
-    var time = LocalDateTime(
-        2021, 11, 21,
-        12, 0, 0, 0
-    ).toInstant(TimeZone.UTC)
-    for ((index, category) in mappedParticipants.keys.withIndex()) {
-        csvWriter().open("testData/testStartProtocol$index.csv") {
-            writeRow(
-                listOf(category, "", "", "", "", "")
-            )
-            for (participant in mappedParticipants[category]!!.shuffled()) {
-                var participantNumber = startNumber.toString()
-                while (participantNumber.length < numberLength) {
-                    participantNumber = "0$participantNumber"
-                }
-                writeRow(
-                    listOf(
-                        participantNumber, participant.surname, participant.name,
-                        participant.birthYear, participant.sportsCategory, time.toString().substring(11..18)
-                    )
-                )
-                time = time.plus(DateTimePeriod(minutes = 1), TimeZone.UTC)
-                startNumber += 1
-            }
-        }
-    }
-}
 
 fun makeCompetition(pathEvent: String): Competition {
     var eventName = ""
@@ -68,7 +38,7 @@ fun main(args: Array<String>) {
     val pathApplications = "sample-data/applications"
     val comp = makeCompetition(pathEvent)
     comp.addOrganisationsToCompetition(pathApplications)
-    competitionToStartLists(comp)
+    Competition.competitionToStartLists(comp)
 
 
 }
