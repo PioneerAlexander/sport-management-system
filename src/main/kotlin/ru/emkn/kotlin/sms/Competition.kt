@@ -4,7 +4,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.*
 import java.io.File
 
-class Competition (val name: String, val date: String, var orgs: List<Organisation> = listOf()){
+class Competition (val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()){
 
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }

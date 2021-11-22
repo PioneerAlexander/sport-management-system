@@ -18,8 +18,7 @@ fun applicationToOrg(fileName: String): Organisation {
                 require("Имя" in row.keys)
                 require("Г.р." in row.keys)
                 require("Разр." in row.keys)
-            }
-            catch (e:IllegalArgumentException) {
+            } catch (e: IllegalArgumentException) {
 
             }
             TODO("Skip next line")
@@ -32,20 +31,26 @@ fun applicationToOrg(fileName: String): Organisation {
 
 fun makeCompetition(pathEvent: String): Competition {
     var eventName = ""
-    var eventDate = ""  //maybe kotlinx-datetime
+    var eventDate = LocalDate(2021, 11, 21)
     csvReader().open(pathEvent) {
         readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-            //check for only 1 element
+            require(row.size == 2)
             eventName = row["Название"]!!
-            eventDate = row["Дата"]!!
+            eventDate = LocalDate(
+                row["Дата"]!!.split('.')[2].toInt(),
+                row["Дата"]!!.split('.')[1].toInt(),
+                row["Дата"]!!.split('.')[0].toInt()
+            )
         }
     }
     return Competition(eventName, eventDate)
 }
 
 fun checkDistanceCompletion(participant: Participant): Boolean {
-    TODO("сравнивать пройденные участником (participant.checkpoints) и те, которые он должен пройти," +
-            "проверить галичие последнего и последовательность")
+    TODO(
+        "сравнивать пройденные участником (participant.checkpoints) и те, которые он должен пройти," +
+                "проверить галичие последнего и последовательность"
+    )
 }
 
 fun main(args: Array<String>) {
