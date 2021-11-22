@@ -32,9 +32,12 @@ fun getMapOfDistancesCheckpoints(): Map<String, List<Int>> {
 data class SportClass(val name: String, val distance: Distance)
 
 class Distance(val name: String) {
+    companion object{
+        val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints()
+    }
     // TODO(названия немного отличающиеся от заданных работают некорректно)
     // TODO( "Ж16  студенты"(from courses.csv) != "Ж16 студенты"(from classes.csv))
 
-    val checkpoints = getMapOfDistancesCheckpoints()[name]
+    val checkpoints = mapOfDistancesCheckpoints[name]
 }
 
