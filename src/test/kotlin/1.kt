@@ -1,3 +1,4 @@
+import ru.emkn.kotlin.sms.Participant
 import ru.emkn.kotlin.sms.Split
 import ru.emkn.kotlin.sms.getMapFromNumberToSplits
 import java.time.LocalTime
