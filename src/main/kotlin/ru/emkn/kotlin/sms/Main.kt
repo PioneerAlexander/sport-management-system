@@ -12,11 +12,17 @@ fun applicationToOrg(fileName: String): Organisation {
     csvReader().open(fileName) {
         org.name = readNext()!![0]
         readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-            require("Группа" in row.keys)
-            require("Фамилия" in row.keys)
-            require("Имя" in row.keys)
-            require("Г.р." in row.keys)
-            require("Разр." in row.keys)
+            try {
+                require("Группа" in row.keys)
+                require("Фамилия" in row.keys)
+                require("Имя" in row.keys)
+                require("Г.р." in row.keys)
+                require("Разр." in row.keys)
+            }
+            catch (e:IllegalArgumentException) {
+
+            }
+            TODO("Skip next line")
             org.addMember(Participant(row["Группа"]!!, row["Фамилия"]!!, row["Имя"]!!, row["Г.р."]!!, row["Разр."]!!))
         }
     }
@@ -37,6 +43,10 @@ fun makeCompetition(pathEvent: String): Competition {
     return Competition(eventName, eventDate)
 }
 
+fun checkDistanceCompletion(participant: Participant): Boolean {
+    TODO("сравнивать пройденные участником (participant.checkpoints) и те, которые он должен пройти," +
+            "проверить галичие последнего и последовательность")
+}
 
 fun main(args: Array<String>) {
     val pathEvent = "sample-data/event.csv"
