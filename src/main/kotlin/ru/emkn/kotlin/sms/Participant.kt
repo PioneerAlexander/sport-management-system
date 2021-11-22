@@ -20,6 +20,7 @@ class Participant(
 
     var startNumber: String = ""
     var startTime:LocalTime = TODO()
+    var finishTime: Nothing = TODO()
 
     override fun toString(): String {
         return "${this.surname} ${this.name}"
