@@ -12,7 +12,12 @@ fun applicationToOrg(fileName: String): Organisation {
     csvReader().open(fileName) {
         org.name = readNext()!![0]
         readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-            org.addMember(Participant(row["Группа"], row["Фамилия"], row["Имя"], row["Г.р."], row["Разр."]))
+            require("Группа" in row.keys)
+            require("Фамилия" in row.keys)
+            require("Имя" in row.keys)
+            require("Г.р." in row.keys)
+            require("Разр." in row.keys)
+            org.addMember(Participant(row["Группа"]!!, row["Фамилия"]!!, row["Имя"]!!, row["Г.р."]!!, row["Разр."]!!))
         }
     }
     return org

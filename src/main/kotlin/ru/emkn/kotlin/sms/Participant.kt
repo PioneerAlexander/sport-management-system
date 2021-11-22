@@ -1,11 +1,11 @@
 package ru.emkn.kotlin.sms
 
 class Participant(
-    val ageGroup: String?,
-    val surname: String?,
-    val name: String?,
-    val birthYear: String?,
-    val sportsCategory: String?,
+    val ageGroup: String,
+    val surname: String,
+    val name: String,
+    val birthYear: String,
+    val sportsCategory: String,
 ) {
 
     companion object{
