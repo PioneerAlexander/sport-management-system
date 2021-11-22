@@ -5,6 +5,7 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.io.File
 import kotlinx.datetime.*
 
+fun getOrEmptyString(string: String?): String = string ?: ""
 
 fun applicationToOrg(fileName: String): Organisation {
     //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
@@ -12,17 +13,15 @@ fun applicationToOrg(fileName: String): Organisation {
     csvReader().open(fileName) {
         org.name = readNext()!![0]
         readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-            try {
-                require("Группа" in row.keys)
-                require("Фамилия" in row.keys)
-                require("Имя" in row.keys)
-                require("Г.р." in row.keys)
-                require("Разр." in row.keys)
-            } catch (e: IllegalArgumentException) {
-
-            }
-            TODO("Skip next line")
-            org.addMember(Participant(row["Группа"]!!, row["Фамилия"]!!, row["Имя"]!!, row["Г.р."]!!, row["Разр."]!!))
+            org.addMember(
+                Participant(
+                    getOrEmptyString(row["Группа"]),
+                    getOrEmptyString(row["Фамилия"]),
+                    getOrEmptyString(row["Имя"]),
+                    getOrEmptyString(row["Г.р."]),
+                    getOrEmptyString(row["Разр."])
+                )
+            )
         }
     }
     return org
