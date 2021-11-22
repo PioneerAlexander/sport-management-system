@@ -46,13 +46,6 @@ fun makeCompetition(pathEvent: String): Competition {
     return Competition(eventName, eventDate)
 }
 
-fun checkDistanceCompletion(participant: Participant): Boolean {
-    TODO(
-        "сравнивать пройденные участником (participant.checkpoints) и те, которые он должен пройти," +
-                "проверить галичие последнего и последовательность"
-    )
-}
-
 fun main(args: Array<String>) {
     val pathEvent = "sample-data/event.csv"
     val pathApplications = "sample-data/applications"
