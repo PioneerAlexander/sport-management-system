@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms
 
+
 class Participant(
     val ageGroup: String?,
     val surname: String?,
@@ -11,6 +12,7 @@ class Participant(
     companion object{
         val mapOfStringDistance = getSportClasses()
         val mapFromNumberToParticipant: Map<String, Participant> = TODO()
+        val mapFromNumberToSplits: Map<String, List<Split>> = getMapFromNumberToSplits()
 
     }
 

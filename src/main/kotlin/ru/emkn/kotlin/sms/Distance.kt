@@ -2,11 +2,14 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import java.io.File
+import kotlinx.datetime.*
+import java.time.LocalTime
 
-fun getSportClasses(): Map<String, Distance> {
-    require(File("sample-data/classes.csv").isFile) { "No courses file" }
+
+fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
+    require(File(filePath).isFile) { "No courses file" }
     val generator = mutableMapOf<String, Distance>()
-    csvReader().open("sample-data/classes.csv") {
+    csvReader().open(filePath) {
         readNext()
         readAllAsSequence().forEach {
             require(it.size == 2) { "Wrong classes file" }
@@ -16,18 +19,40 @@ fun getSportClasses(): Map<String, Distance> {
     return generator
 }
 
-fun getMapOfDistancesCheckpoints(): Map<String, List<Int>> {
-    require(File("sample-data/courses.csv").isFile) { "No courses file" }
+fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): Map<String, List<Int>> {
+    require(File(filePath).isFile) { "No courses file" }
     val generatorOfMap = mutableMapOf<String, List<Int>>()
-    csvReader().open("sample-data/courses.csv") {
+    csvReader().open(filePath) {
         readNext()
         readAllAsSequence().forEach { list ->
-            generatorOfMap[list[0]] = list.subList(1, list.lastIndex).filter { it != "" }.map { it.toInt() }
+            generatorOfMap[list[0]] = list.subList(1, list.lastIndex+1).filter { it != "" }.map { it.toInt() }
 
         }
     }
     return generatorOfMap
 }
+
+fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<String, List<Split>>{
+    val generator = mutableMapOf<String, List<Split>>()
+    csvReader().open(filePath) {
+        readAllAsSequence().forEach { list ->
+            require(list.isNotEmpty())
+            val key = list[0]
+            val smth = list.subList(1,list.lastIndex+1).filter { it != "" }
+            require(smth.size % 2 == 0) {"actual size is ${smth.size}"}
+            val listGenerator = mutableListOf<Split>()
+            for(i in smth.indices step 2){
+                val tempIterable = smth[i+1].split(":").map { it.toInt() }
+                listGenerator.add(Split(smth[i], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
+            }
+            generator[key] = listGenerator
+
+        }
+    }
+    return  generator
+}
+
+data class Split(val name: String, val time:LocalTime)
 
 
 
