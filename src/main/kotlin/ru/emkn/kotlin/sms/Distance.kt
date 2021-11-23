@@ -67,6 +67,8 @@ class Distance(val name: String) {
     companion object{
         val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints()
     }
+
+
     // TODO(названия немного отличающиеся от заданных работают некорректно)
     // TODO( "Ж16  студенты"(from courses.csv) != "Ж16 студенты"(from classes.csv))
 
@@ -77,6 +79,21 @@ class Distance(val name: String) {
             }
             return listOf()
         }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Distance
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
 
 }
 
