@@ -9,7 +9,7 @@ class Organisation(var name: String, val members: MutableList<Participant> = mut
     }
 
     override fun toString(): String {
-        return "${this.name} has ${this.members.size} members"
+        return "${this.name}"
     }
 
 }

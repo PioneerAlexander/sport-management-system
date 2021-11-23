@@ -1,9 +1,8 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import java.io.File
 import kotlinx.datetime.*
+import java.time.temporal.TemporalAmount
 
 
 fun applicationToOrg(fileName: String): Organisation {
@@ -21,8 +20,8 @@ fun applicationToOrg(fileName: String): Organisation {
             } catch (e: IllegalArgumentException) {
 
             }
-            TODO("Skip next line")
-            org.addMember(Participant(row["Группа"]!!, row["Фамилия"]!!, row["Имя"]!!, row["Г.р."]!!, row["Разр."]!!))
+            //TODO("Skip next line")
+            org.addMember(Participant(row["Группа"]!!, row["Фамилия"]!!, row["Имя"]!!, row["Г.р."]!!, row["Разр."]!!,org))
         }
     }
     return org
@@ -52,6 +51,15 @@ fun main(args: Array<String>) {
     val comp = makeCompetition(pathEvent)
     comp.addOrganisationsToCompetition(pathApplications)
     Competition.competitionToStartLists(comp)
+    generateResultsFromSplits(comp.participants, "testData/results.csv")
+
+//    val a = LocalTime.of(12, 0, 0, 0)
+//    val b = LocalTime.of(13, 0, 1, 0)
+//    println(
+//        b.minusHours(a.hour.toLong()).
+//        minusMinutes(a.minute.toLong()).
+//        minusSeconds(a.second.toLong())
+//    )
 
 
 }
