@@ -8,33 +8,9 @@ import java.time.LocalTime
 
 val logger = KotlinLogging.logger { }
 
-fun getOrEmptyString(string: String?): String = string ?: ""
-
-fun applicationToOrg(fileName: String): Organisation {
-    //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
-    val org = Organisation()
-    csvReader().open(fileName) {
-        org.name = readNext()!![0]
-        readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-            org.addMember(
-                Participant(
-                    getOrEmptyString(row["Группа"]),
-                    getOrEmptyString(row["Фамилия"]),
-                    getOrEmptyString(row["Имя"]),
-                    getOrEmptyString(row["Г.р."]),
-                    getOrEmptyString(row["Разр."]),
-                    org.name
-                )
-            )
-        }
-    }
-    return org
-}
-
-
 fun makeCompetition(pathEvent: String, targetPath:String = "comp"): Competition {
-    val f = File(System.getProperty("user.dir"), targetPath)
-    f.mkdirs()
+    val mainDirectory = File(System.getProperty("user.dir"), targetPath)
+    mainDirectory.mkdirs()
     var eventName = ""
     var eventDate = LocalDate.parse("2021-11-21")
     csvReader().open(pathEvent) {
@@ -84,6 +60,5 @@ fun recreateSavedCompetition(folderPath: String): Competition {
 }
 
 fun main(args: Array<String>) {
-
 
 }

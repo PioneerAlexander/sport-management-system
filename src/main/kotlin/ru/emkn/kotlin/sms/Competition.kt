@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms
 
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import kotlinx.datetime.*
 import java.io.File
@@ -108,6 +109,28 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     companion object {
 
+        fun getOrEmptyString(string: String?): String = string ?: ""
+
+        fun applicationToOrg(fileName: String): Organisation {
+            //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
+            val org = Organisation()
+            csvReader().open(fileName) {
+                org.name = readNext()!![0]
+                readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
+                    org.addMember(
+                        Participant(
+                            getOrEmptyString(row["Группа"]),
+                            getOrEmptyString(row["Фамилия"]),
+                            getOrEmptyString(row["Имя"]),
+                            getOrEmptyString(row["Г.р."]),
+                            getOrEmptyString(row["Разр."]),
+                            org.name
+                        )
+                    )
+                }
+            }
+            return org
+        }
     }
 
 }
