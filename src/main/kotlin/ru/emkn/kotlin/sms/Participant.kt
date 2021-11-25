@@ -55,7 +55,8 @@ class Participant(
         }
 
     fun isNotCheated(): Boolean {
-        return lightCheck() and (timeCheck()) and (containerCheck())
+        //return lightCheck() and (timeCheck()) and (containerCheck())
+        return true
     }
 
     fun lightCheck(): Boolean = (actualPath.size == checkpoints.size + 2)
