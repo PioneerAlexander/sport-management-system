@@ -24,6 +24,26 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     val sportClasses = getSportClasses()
 
+    var classesPath: String = "" //когда в соревнование первый раз передается classesPath, меняется map в Participant
+        set(value) {
+            Participant.mapOfStringDistance = getSportClasses(value)
+            field = value
+        }
+
+    var splitsPath: String = "" //когда в соревнование первый раз передается splitsPath, меняется map в Participant
+        set(value) {
+            Participant.mapFromNumberToSplits = getMapFromNumberToSplits(value)
+            field = value
+        }
+
+    var coursesPath: String = "" //когда в соревнование первый раз передается splitsPath, меняется map в Distance
+        set(value) {
+            Distance.mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints(value)
+            field = value
+        }
+
+
+
     fun createStartProtocols() {
         val f = File("comp", "startProtocols")
         f.mkdirs()

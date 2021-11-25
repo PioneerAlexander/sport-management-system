@@ -61,7 +61,7 @@ data class Split(val name: String, val time: LocalTime)
 
 class Distance(val name: String) {
     companion object {
-        val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints()
+        var mapOfDistancesCheckpoints: Map<String, List<String>> = mapOf()
     }
 
 

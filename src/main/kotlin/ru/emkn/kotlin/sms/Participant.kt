@@ -13,11 +13,8 @@ class Participant(
 ) {
 
     companion object {
-        val mapOfStringDistance = getSportClasses()
-
-        //val mapFromNumberToParticipant: Map<String, Participant> = TODO()
-        val mapFromNumberToSplits: Map<String, List<Split>> = getMapFromNumberToSplits()
-
+        var mapOfStringDistance : Map<String, Distance> = mapOf()
+        var mapFromNumberToSplits: Map<String, List<Split>> = mapOf()
     }
 
     var startNumber: String = ""

@@ -3,13 +3,17 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.time.LocalTime
 
-fun finishTimeToParticipant(participant: Participant) {
-    if (participant.startNumber in Participant.mapFromNumberToSplits.keys) {
-        participant.finishTime = Participant.mapFromNumberToSplits[participant.startNumber]!!.last().time
+fun finishTimeToParticipant(participant: Participant,mapFromNumberToSplits: Map<String, List<Split>>) {
+
+    if (participant.startNumber in mapFromNumberToSplits.keys) {
+        participant.finishTime = mapFromNumberToSplits[participant.startNumber]!!.last().time
     }
 }
 
-fun generateResultsFromSplits(participants: List<Participant>, outputPath:String = "comp") {
+fun generateResultsFromSplits(competition: Competition, outputPath:String = "comp") {
+
+    val participants = competition.participants
+    val mapFromNumberToSplits = Participant.mapFromNumberToSplits
     val sortedByAgeGroup = participants.groupBy { it.ageGroup }
 
     csvWriter().open("$outputPath/results.csv") {
@@ -31,10 +35,10 @@ fun generateResultsFromSplits(participants: List<Participant>, outputPath:String
                     "Отставание"
                 )
             )
-            for (participant in participants) {
-                finishTimeToParticipant(participant)
+            for (participant in participants) { //Для всех
+                finishTimeToParticipant(participant, mapFromNumberToSplits)
             }
-            for (participant in sortedByAgeGroup[ageGroup]!!
+            for (participant in sortedByAgeGroup[ageGroup]!! //только те, кто честно финишировал
                 .filter { it.isNotCheated() }
                 .sortedBy { timeDifference(it.startTime, it.finishTime) })
                  {
@@ -72,7 +76,7 @@ fun generateResultsFromSplits(participants: List<Participant>, outputPath:String
                 }
                      index+=1
             }
-            for ( participant in sortedByAgeGroup[ageGroup]!!
+            for ( participant in sortedByAgeGroup[ageGroup]!! //кто нечестно финишировал
                 .filter { !(it.isNotCheated()) })
             {
                 writeRow(

@@ -61,4 +61,5 @@ fun recreateSavedCompetition(folderPath: String): Competition {
 
 fun main(args: Array<String>) {
 
+
 }
