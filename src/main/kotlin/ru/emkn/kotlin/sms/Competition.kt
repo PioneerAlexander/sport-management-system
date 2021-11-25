@@ -109,9 +109,9 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
         if (date != other.date) return false
 
-        if (!orgs.containsAll(other.orgs)) return false
+        if (!orgs.containsAll(other.orgs) || !other.orgs.containsAll(orgs)) return false
 
-        if (!participants.containsAll(other.participants)) return false
+        if (!participants.containsAll(other.participants) || !other.participants.containsAll(participants)) return false
 
         if (size != other.size) return false
 

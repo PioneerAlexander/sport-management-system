@@ -10,7 +10,7 @@ fun finishTimeToParticipant(participant: Participant,mapFromNumberToSplits: Map<
     }
 }
 
-fun generateResultsFromSplits(competition: Competition, outputPath:String = "comp") {
+fun generateResults(competition: Competition, outputPath:String = "comp") {
 
     val participants = competition.participants
     val mapFromNumberToSplits = Participant.mapFromNumberToSplits
@@ -70,11 +70,11 @@ fun generateResultsFromSplits(competition: Competition, outputPath:String = "com
                             participant.organisation,
                             timeDifference(participant.startTime, participant.finishTime).forPrint(),
                             index+1,
-                            "+${timeDifference(winnerTime, timeDifference(participant.startTime,participant.finishTime))}"
+                            "+${timeDifference(winnerTime, timeDifference(participant.startTime,participant.finishTime)).forPrint()}"
                         )
                     )
                 }
-                     index+=1
+                     index += 1
             }
             for ( participant in sortedByAgeGroup[ageGroup]!! //кто нечестно финишировал
                 .filter { !(it.isNotCheated()) })
