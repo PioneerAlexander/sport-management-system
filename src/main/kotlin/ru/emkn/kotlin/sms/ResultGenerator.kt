@@ -9,12 +9,13 @@ fun finishTimeToParticipant(participant: Participant) {
     }
 }
 
-fun generateResultsFromSplits(participants: List<Participant>, outputPath:String) {
+fun generateResultsFromSplits(participants: List<Participant>, outputPath:String = "comp") {
     val sortedByAgeGroup = participants.groupBy { it.ageGroup }
 
-    csvWriter().open(outputPath) {
+    csvWriter().open("$outputPath/results.csv") {
         writeRow(listOf("Протокол результатов.", "", "", "", "", "", "", "", "", ""))
         for (ageGroup in sortedByAgeGroup.keys) {
+            var index = 0
             writeRow(ageGroup,"","","","","","","","","")
             writeRow(
                 listOf(
@@ -33,10 +34,10 @@ fun generateResultsFromSplits(participants: List<Participant>, outputPath:String
             for (participant in participants) {
                 finishTimeToParticipant(participant)
             }
-            for ((index, participant) in sortedByAgeGroup[ageGroup]!!
+            for (participant in sortedByAgeGroup[ageGroup]!!
                 .filter { it.isNotCheated() }
-                .sortedBy { timeDifference(it.startTime, it.finishTime) }
-                .withIndex()) {
+                .sortedBy { timeDifference(it.startTime, it.finishTime) })
+                 {
                 var winnerTime = LocalTime.of(0, 0, 0, 0)
                 if (index == 0) {
                     winnerTime = participant.finishTime
@@ -69,6 +70,23 @@ fun generateResultsFromSplits(participants: List<Participant>, outputPath:String
                         )
                     )
                 }
+                     index+=1
+            }
+            for ( participant in sortedByAgeGroup[ageGroup]!!
+                .filter { !(it.isNotCheated()) })
+            {
+                writeRow(
+                    listOf(
+                        index+1,
+                        participant.startNumber,
+                        participant.surname,
+                        participant.name,
+                        participant.birthYear,
+                        participant.sportsCategory,
+                        participant.organisation,
+                        "снят"
+                    )
+                )
             }
         }
     }
