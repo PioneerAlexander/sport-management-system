@@ -67,7 +67,7 @@ fun main(args: Array<String>) {
         when (args[0]) {
             "start" -> {
                 if (args.size < 3) {
-                    logger.warn { "not enough parameters in command line arguments to create startup log" }
+                    logger.warn { "not enough parameters in command line arguments to create start protocols" }
                 } else {
                     val competition = makeCompetition(args[1]) //path to file event.csv
 
@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
             }
             "finish" -> {
                 if (args.size < 4) {
-                    println("not enough parameters in command line arguments to create finish logs")
+                    println("not enough parameters in command line arguments to create finish protocols")
                 } else {
                     val competition = recreateSavedCompetition()
 
