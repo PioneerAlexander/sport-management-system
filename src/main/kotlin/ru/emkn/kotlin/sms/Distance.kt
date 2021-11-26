@@ -8,14 +8,18 @@ import java.time.LocalTime
 
 
 fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
-    require(File(filePath).isFile) { "No courses file" }
     val generator = mutableMapOf<String, Distance>()
-    csvReader().open(filePath) {
-        readNext()
-        readAllAsSequence().forEach {
-            require(it.size == 2) { "Wrong classes file" }
-            generator[it[0]] = Distance(it[1])
+    try {
+        require(File(filePath).isFile) { "No courses file" }
+        csvReader().open(filePath) {
+            readNext()
+            readAllAsSequence().forEach {
+                require(it.size == 2) { "Wrong classes file" }
+                generator[it[0]] = Distance(it[1])
+            }
         }
+    } catch (ex: Exception) {
+        logger.error { "Неверные данные в $filePath" }
     }
     return generator
 }
@@ -31,7 +35,8 @@ fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): 
 
             }
         }
-    } finally {
+    } catch (ex: Exception) {
+        logger.error { "Неверные данные в $filePath" }
     }
     return generatorOfMap
 }
@@ -52,7 +57,8 @@ fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<S
                     listGenerator.add(Split(smth[i], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
                 }
                 generator[key] = listGenerator
-            } finally {
+            } catch (ex: Exception) {
+                logger.warn { "Частично неверные данные в $filePath" }
             }
         }
     }
@@ -71,7 +77,7 @@ fun splitsInputByParticipantNum(tag: String, directoryPath: String): Map<String,
     val directory = File(directoryPath)
     try {
         check(directory.isDirectory)
-        if (directory.listFiles() == null){
+        if (directory.listFiles() == null) {
             logger.error { "Протоколы похождения дистанции не найдены" }
             return generator
         }
@@ -83,7 +89,7 @@ fun splitsInputByParticipantNum(tag: String, directoryPath: String): Map<String,
                     generator.addSplitsParticipantNameTimeFile(file)
                 }
             } catch (e: IndexOutOfBoundsException) {
-                logger.error { "Неверные данные в файле ${file.name}" }
+                logger.warn { "Неверные данные в файле ${file.name}" }
             }
         }
     } catch (e: IllegalStateException) {
