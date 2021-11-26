@@ -4,7 +4,7 @@ import kotlin.test.*
 
 internal class TestOfInput {
     @Test
-    fun testOfGetMapFromNumberToSplits(){
+    fun testOfGetMapFromNumberToSplits() {
         val a = getMapFromNumberToSplits("src/test/resources/test1.csv")
         val b = mutableMapOf<String, List<Split>>()
         b["1"] = listOf(
@@ -15,7 +15,7 @@ internal class TestOfInput {
     }
 
     @Test
-    fun testGetSportClasses(){
+    fun testGetSportClasses() {
         val a = getSportClasses("src/test/resources/test1_classes.csv")
         val b = mapOf<String, Distance>(
             Pair("1", Distance("МЖ9 10")),
@@ -25,7 +25,7 @@ internal class TestOfInput {
     }
 
     @Test
-    fun testGetMapOfDistancesCheckpoints(){
+    fun testGetMapOfDistancesCheckpoints() {
         val a = getMapOfDistancesCheckpoints("src/test/resources/test1_courses.csv")
         val b = mapOf<String, List<String>>(
             Pair("1", listOf("11", "12", "13", "14", "15", "16")),
@@ -34,6 +34,45 @@ internal class TestOfInput {
         )
         assertEquals(b, a)
     }
+
+    @Test
+    fun testOfSplitsInputByParticipantName() {
+        val a = splitsInputByParticipantNum("ByParticipantNum", "src/test/resources/splitsByNum")
+        val b = mutableMapOf<String, List<Split>>()
+        b["007"] = listOf(
+            Split("1km", LocalTime.of(12, 7, 15)),
+            Split("2km", LocalTime.of(12, 11, 36)),
+            Split("3km", LocalTime.of(12, 13, 29)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+        )
+        b["243"] = listOf(
+            Split("1km", LocalTime.of(12, 6, 15)),
+            Split("2km", LocalTime.of(12, 10, 36)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+
+        )
+        assertEquals(b, a)
+    }
+
+    @Test
+    fun testOfSplitsInputBySplitsName() {
+        val a = splitsInputByParticipantNum("BySplitsName", "src/test/resources/splitsByName")
+        val b = mutableMapOf<String, List<Split>>()
+        b["007"] = listOf(
+            Split("1km", LocalTime.of(12, 7, 15)),
+            Split("2km", LocalTime.of(12, 11, 36)),
+            Split("3km", LocalTime.of(12, 13, 29)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+        )
+        b["243"] = listOf(
+            Split("1km", LocalTime.of(12, 6, 15)),
+            Split("2km", LocalTime.of(12, 10, 36)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+
+        )
+        assertEquals(b, a)
+    }
+
 }
 /*
 internal class TestOfParticipant{
