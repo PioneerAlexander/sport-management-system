@@ -44,8 +44,8 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
 
 
-    fun createStartProtocols() {
-        val f = File("comp", "startProtocols")
+    fun createStartProtocols(targetPath:String = "comp") {
+        val f = File(targetPath, "startProtocols")
         f.mkdirs()
         val mappedParticipants = this.participants.groupBy { it.ageGroup }
         val numberLength = this.size.toString().length
@@ -156,7 +156,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 }
 
 
-fun LocalTime.forPrint(): String {
+fun LocalTime.forPrint(): String { //не обрезать конец строки если в секундах нули
     val buf = StringBuilder(18)
     val hourValue = hour
     val minuteValue = minute
