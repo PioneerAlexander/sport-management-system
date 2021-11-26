@@ -20,6 +20,7 @@ class Participant(
     var startNumber: String = ""
     var startTime: LocalTime = LocalTime.of(0, 0, 0, 0)
     var finishTime: LocalTime = LocalTime.of(0, 0, 0, 0)
+    var points: Int = 0
 
     override fun toString(): String {
         return "${this.surname} ${this.name}"
@@ -55,7 +56,8 @@ class Participant(
         }
 
     fun isNotCheated(): Boolean {
-        return lightCheck() and (timeCheck()) and (containerCheck())
+        //return lightCheck() and (timeCheck()) and (containerCheck())
+        return true
     }
 
     fun lightCheck(): Boolean = (actualPath.size == checkpoints.size + 2)

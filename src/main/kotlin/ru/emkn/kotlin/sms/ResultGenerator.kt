@@ -3,14 +3,14 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.time.LocalTime
 
-fun finishTimeToParticipant(participant: Participant,mapFromNumberToSplits: Map<String, List<Split>>) {
+fun finishTimeToParticipant(participant: Participant, mapFromNumberToSplits: Map<String, List<Split>>) {
 
     if (participant.startNumber in mapFromNumberToSplits.keys) {
         participant.finishTime = mapFromNumberToSplits[participant.startNumber]!!.last().time
     }
 }
 
-fun generateResultsFromSplits(competition: Competition, outputPath:String = "comp") {
+fun generateResults(competition: Competition, outputPath: String = "comp") {
 
     val participants = competition.participants
     val mapFromNumberToSplits = Participant.mapFromNumberToSplits
@@ -20,7 +20,7 @@ fun generateResultsFromSplits(competition: Competition, outputPath:String = "com
         writeRow(listOf("Протокол результатов.", "", "", "", "", "", "", "", "", ""))
         for (ageGroup in sortedByAgeGroup.keys) {
             var index = 0
-            writeRow(ageGroup,"","","","","","","","","")
+            writeRow(ageGroup, "", "", "", "", "", "", "", "", "")
             writeRow(
                 listOf(
                     "№ п/п",
@@ -40,14 +40,14 @@ fun generateResultsFromSplits(competition: Competition, outputPath:String = "com
             }
             for (participant in sortedByAgeGroup[ageGroup]!! //только те, кто честно финишировал
                 .filter { it.isNotCheated() }
-                .sortedBy { timeDifference(it.startTime, it.finishTime) })
-                 {
+                .sortedBy { timeDifference(it.startTime, it.finishTime) }) {
                 var winnerTime = LocalTime.of(0, 0, 0, 0)
-                if (index == 0) {
+                if (index == 0) {  //отдельно победителя записываем
                     winnerTime = participant.finishTime
+                    participant.points = 100
                     writeRow(
                         listOf(
-                            index+1,
+                            index + 1,
                             participant.startNumber,
                             participant.surname,
                             participant.name,
@@ -55,13 +55,17 @@ fun generateResultsFromSplits(competition: Competition, outputPath:String = "com
                             participant.sportsCategory,
                             participant.organisation,
                             timeDifference(participant.startTime, participant.finishTime).forPrint(),
-                            index+1
+                            index + 1
                         )
                     )
-                } else {
+                } else {  //все честные кроме победителя
+                    participant.points = 2 * (100 - ratioOfTwoTimes(
+                        timeDifference(participant.startTime, participant.finishTime),
+                        winnerTime
+                    )).toInt()
                     writeRow(
                         listOf(
-                            index+1,
+                            index + 1,
                             participant.startNumber,
                             participant.surname,
                             participant.name,
@@ -69,19 +73,23 @@ fun generateResultsFromSplits(competition: Competition, outputPath:String = "com
                             participant.sportsCategory,
                             participant.organisation,
                             timeDifference(participant.startTime, participant.finishTime).forPrint(),
-                            index+1,
-                            "+${timeDifference(winnerTime, timeDifference(participant.startTime,participant.finishTime))}"
+                            index + 1,
+                            "+${
+                                timeDifference(
+                                    winnerTime,
+                                    timeDifference(participant.startTime, participant.finishTime)
+                                ).forPrint()
+                            }"
                         )
                     )
                 }
-                     index+=1
+                index += 1
             }
-            for ( participant in sortedByAgeGroup[ageGroup]!! //кто нечестно финишировал
-                .filter { !(it.isNotCheated()) })
-            {
+            for (participant in sortedByAgeGroup[ageGroup]!! //кто нечестно финишировал
+                .filter { !(it.isNotCheated()) }) {
                 writeRow(
                     listOf(
-                        index+1,
+                        index + 1,
                         participant.startNumber,
                         participant.surname,
                         participant.name,
@@ -96,7 +104,40 @@ fun generateResultsFromSplits(competition: Competition, outputPath:String = "com
     }
 }
 
+fun generateTeamResults(
+    competition: Competition,
+    outputPath: String = "comp"
+) { //можно вызывать только после generateResults
+    val sortedOrganisations = competition.orgs.sortedBy { org: Organisation -> org.members.sumOf { it.points } }
+    csvWriter().open("$outputPath/teamResults.csv") {
+        writeRow(
+            listOf(
+                "№ п/п",
+                "Название",
+                "Место",
+                "Результат",
+            )
+        )
+        for ((index, organisation) in competition.orgs.withIndex()) {
+            writeRow(
+                listOf(
+                    index + 1,
+                    organisation.name,
+                    index + 1,
+                    organisation.members.sumOf { it.points }
+                )
+            )
+        }
+
+    }
+}
+
 fun timeDifference(start: LocalTime, finish: LocalTime): LocalTime =
     finish.minusHours(start.hour.toLong())
         .minusMinutes(start.minute.toLong())
         .minusSeconds(start.second.toLong())
+
+fun ratioOfTwoTimes(numerator: LocalTime, denominator: LocalTime): Double {
+    return (3600 * numerator.hour + 60 * numerator.minute + numerator.second).toDouble() /
+            (3600 * denominator.hour + 60 * denominator.minute + denominator.second)
+}

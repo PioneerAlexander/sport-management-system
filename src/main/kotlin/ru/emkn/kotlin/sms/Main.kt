@@ -8,7 +8,7 @@ import java.time.LocalTime
 
 val logger = KotlinLogging.logger { }
 
-fun makeCompetition(pathEvent: String, targetPath:String = "comp"): Competition {
+fun makeCompetition(pathEvent: String, targetPath: String = "comp"): Competition {
     val mainDirectory = File(System.getProperty("user.dir"), targetPath)
     mainDirectory.mkdirs()
     var eventName = ""
@@ -27,7 +27,7 @@ fun makeCompetition(pathEvent: String, targetPath:String = "comp"): Competition 
     return Competition(eventName, eventDate)
 }
 
-fun recreateSavedCompetition(folderPath: String): Competition {
+fun recreateSavedCompetition(folderPath: String = "comp"): Competition {
     var eventName = ""
     var eventDate = LocalDate.parse("2021-11-21")
     val allParticipants = mutableListOf<Participant>()
@@ -61,5 +61,36 @@ fun recreateSavedCompetition(folderPath: String): Competition {
 
 fun main(args: Array<String>) {
 
+    if (args.isEmpty()) {
+        println("pass parameters to command line arguments and try again")
+    } else {
+        when (args[0]) {
+            "start" -> {
+                if (args.size < 3) {
+                    logger.warn { "not enough parameters in command line arguments to create start protocols" }
+                } else {
+                    val competition = makeCompetition(args[1]) //path to file event.csv
 
+                    competition.addOrganisationsToCompetition(args[2]) //way to directory with applications
+                    competition.createStartProtocols()
+                    competition.save() //saves start log in the path with pathName 'comp'
+                }
+            }
+            "finish" -> {
+                if (args.size < 4) {
+                    println("not enough parameters in command line arguments to create finish protocols")
+                } else {
+                    val competition = recreateSavedCompetition()
+
+                    competition.classesPath = args[1] //way to path with classes
+                    competition.coursesPath = args[2] //way to path with courses
+                    competition.splitsPath = args[3] //way to path with splits
+                    generateResults(competition)
+                }
+            }
+            else -> {
+                println("change first argument of command line to 'start' or 'finish' and try again!")
+            }
+        }
+    }
 }
