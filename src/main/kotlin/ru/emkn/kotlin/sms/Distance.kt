@@ -2,18 +2,24 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import java.io.File
+import java.lang.IndexOutOfBoundsException
+import java.security.AlgorithmParameterGenerator
 import java.time.LocalTime
 
 
 fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
-    require(File(filePath).isFile) { "No courses file" }
     val generator = mutableMapOf<String, Distance>()
-    csvReader().open(filePath) {
-        readNext()
-        readAllAsSequence().forEach {
-            require(it.size == 2) { "Wrong classes file" }
-            generator[it[0]] = Distance(it[1])
+    try {
+        require(File(filePath).isFile) { "No courses file" }
+        csvReader().open(filePath) {
+            readNext()
+            readAllAsSequence().forEach {
+                require(it.size == 2) { "Wrong classes file" }
+                generator[it[0]] = Distance(it[1])
+            }
         }
+    } catch (ex: Exception) {
+        logger.error { "Неверные данные в $filePath" }
     }
     return generator
 }
@@ -29,11 +35,13 @@ fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): 
 
             }
         }
-    } finally {
+    } catch (ex: Exception) {
+        logger.error { "Неверные данные в $filePath" }
     }
     return generatorOfMap
 }
 
+//
 fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<String, List<Split>> {
     val generator = mutableMapOf<String, List<Split>>()
     csvReader().open(filePath) {
@@ -49,12 +57,99 @@ fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<S
                     listGenerator.add(Split(smth[i], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
                 }
                 generator[key] = listGenerator
-            } finally {
+            } catch (ex: Exception) {
+                logger.warn { "Частично неверные данные в $filePath" }
             }
         }
     }
     return generator
 }
+
+fun MutableMap<String, MutableList<Split>>.sortSplits() {
+    this.forEach { list ->
+        list.value.sortBy { it.time }
+    }
+}
+
+//tags: "ByParticipantNum" and "BySplitsName"
+fun splitsInputByParticipantNum(tag: String, directoryPath: String): Map<String, List<Split>> {
+    val generator = mutableMapOf<String, MutableList<Split>>()
+    val directory = File(directoryPath)
+    try {
+        check(directory.isDirectory)
+        if (directory.listFiles() == null) {
+            logger.error { "Протоколы похождения дистанции не найдены" }
+            return generator
+        }
+        for (file in directory.listFiles()) {
+            try {
+                if (tag == "ByParticipantNum") {
+                    generator.addSplitsNameTimeFromFile(file)
+                } else {
+                    generator.addSplitsParticipantNameTimeFile(file)
+                }
+            } catch (e: IndexOutOfBoundsException) {
+                logger.warn { "Неверные данные в файле ${file.name}" }
+            }
+        }
+    } catch (e: IllegalStateException) {
+        logger.error { "Неверная директория с пор межуточными отметками участников" }
+    }
+    generator.sortSplits()
+    return generator
+}
+
+
+fun MutableMap<String, MutableList<Split>>.addSplitsNameTimeFromFile(file: File) {
+    csvReader().open(file) {
+        val numL = readNext()
+        if (numL != null) {
+            readAllAsSequence().forEach {
+                val num = numL[0]
+                val tempIterable = it[1].split(":").map { it.toInt() }
+                if (num in this@addSplitsNameTimeFromFile.keys) {
+                    this@addSplitsNameTimeFromFile[num]?.add(
+                        Split(
+                            it[0],
+                            LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])
+                        )
+                    )
+                } else {
+                    this@addSplitsNameTimeFromFile[num] =
+                        mutableListOf(Split(it[0], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
+                }
+            }
+        } else {
+            logger.warn { "Неверный формат файла ${file.name}" }
+        }
+    }
+}
+
+fun MutableMap<String, MutableList<Split>>.addSplitsParticipantNameTimeFile(file: File) {
+    csvReader().open(file) {
+        val nameL = readNext()
+        if (nameL != null) {
+            readAllAsSequence().forEach {
+                val name = nameL[0]
+                val tempIterable = it[1].split(":").map { it.toInt() }
+                if (it[0] in this@addSplitsParticipantNameTimeFile.keys) {
+                    this@addSplitsParticipantNameTimeFile[it[0]]?.add(
+                        Split(
+                            name,
+                            LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])
+                        )
+                    )
+                } else {
+                    this@addSplitsParticipantNameTimeFile[it[0]] =
+                        mutableListOf(Split(name, LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
+                }
+            }
+        } else {
+            logger.warn { "Неверный формат файла ${file.name}" }
+        }
+    }
+}
+
 
 data class Split(val name: String, val time: LocalTime)
 
