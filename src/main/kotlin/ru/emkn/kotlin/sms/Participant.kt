@@ -58,21 +58,27 @@ class Participant(
 
     fun isNotCheated(): Boolean {
         if (!lightCheck()){
+            logger.info { "$this деквалифицирован из-за неверного количества контрольных пунктов" }
             return false
         }
         if (!startTimeCheck()){
+            logger.info { "$this деквалифицирован из-за неверного времени" }
             return false
         }
-        return (containerCheck())
+        if (!containerCheck()){
+            logger.info { "$this деквалифицирован из-за неверного прохождения контрольных пунктов" }
+            return false
+        }
+        return true
     }
 
-    private fun lightCheck(): Boolean = (actualPath.size == checkpoints.size + 1)
+    private fun lightCheck(): Boolean = (actualPath.size == checkpoints.size)
 
     private fun startTimeCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
-        return (startTime > actualPath[0].time)
+        return (startTime < actualPath[0].time)
     }
 
     private fun containerCheck(): Boolean {

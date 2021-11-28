@@ -7,7 +7,7 @@ import java.io.File
 import java.time.LocalTime
 
 class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
-    var inputTag: String = "ByParticipantNum" // TODO(учесть это в вводе) //tags: "ByParticipantNum" and "BySplitsName"
+    var inputTag: String = "ByParticipantNum" // TODO(учесть это в вводе) tags: "ByParticipantNum" and "BySplitsName"
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 

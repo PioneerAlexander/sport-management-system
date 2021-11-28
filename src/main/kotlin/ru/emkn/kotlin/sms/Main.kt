@@ -82,9 +82,9 @@ fun main(args: Array<String>) {
                 } else {
                     val competition = recreateSavedCompetition()
 
-                    competition.classesPath = args[1] //way to path with classes
-                    competition.coursesPath = args[2] //way to path with courses
-                    competition.splitsPath = args[3] //way to path with splits
+                    competition.classesPath = args[1] //path of file with classes
+                    competition.coursesPath = args[2] //path of file with courses
+                    competition.splitsPath = args[3] //path to folder with splits
                     generateResults(competition)
                 }
             }
