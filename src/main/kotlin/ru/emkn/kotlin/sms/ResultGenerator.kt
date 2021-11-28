@@ -2,6 +2,7 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.time.LocalTime
+import kotlin.math.max
 
 fun finishTimeToParticipant(participant: Participant, mapFromNumberToSplits: Map<String, List<Split>>) {
 
@@ -35,7 +36,7 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                     "Отставание"
                 )
             )
-            for (participant in participants) { //Для всех
+            for (participant in participants) { //Для всех добавляем финишное время
                 finishTimeToParticipant(participant, mapFromNumberToSplits)
             }
             var winnerTime = LocalTime.of(0, 0, 0, 0)
@@ -59,10 +60,10 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                         )
                     )
                 } else {  //все честные кроме победителя
-                    participant.points = 2 * (100 - ratioOfTwoTimes(
+                    participant.points = max(0,2 * (100 - ratioOfTwoTimes(
                         timeDifference(participant.startTime, participant.finishTime),
                         winnerTime
-                    )).toInt()
+                    )).toInt())
                     writeRow(
                         listOf(
                             index + 1,
@@ -108,7 +109,7 @@ fun generateTeamResults(
     competition: Competition,
     outputPath: String = "comp"
 ) { //можно вызывать только после generateResults
-    val sortedOrganisations = competition.orgs.sortedBy { org: Organisation -> org.members.sumOf { it.points } }
+    val sortedOrganisations = competition.orgs.sortedByDescending { org: Organisation -> org.members.sumOf { it.points } }
     csvWriter().open("$outputPath/teamResults.csv") {
         writeRow(
             listOf(
@@ -138,6 +139,8 @@ fun timeDifference(start: LocalTime, finish: LocalTime): LocalTime =
         .minusSeconds(start.second.toLong())
 
 fun ratioOfTwoTimes(numerator: LocalTime, denominator: LocalTime): Double {
-    return (3600 * numerator.hour + 60 * numerator.minute + numerator.second).toDouble() /
+    val a = (3600 * numerator.hour + 60 * numerator.minute + numerator.second).toDouble() /
             (3600 * denominator.hour + 60 * denominator.minute + denominator.second)
+    println(a)
+    return a
 }
