@@ -38,12 +38,12 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
             for (participant in participants) { //Для всех
                 finishTimeToParticipant(participant, mapFromNumberToSplits)
             }
+            var winnerTime = LocalTime.of(0, 0, 0, 0)
             for (participant in sortedByAgeGroup[ageGroup]!! //только те, кто честно финишировал
                 .filter { it.isNotCheated() }
                 .sortedBy { timeDifference(it.startTime, it.finishTime) }) {
-                var winnerTime = LocalTime.of(0, 0, 0, 0)
                 if (index == 0) {  //отдельно победителя записываем
-                    winnerTime = participant.finishTime
+                    winnerTime = timeDifference(participant.startTime, participant.finishTime)
                     participant.points = 100
                     writeRow(
                         listOf(
