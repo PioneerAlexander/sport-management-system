@@ -92,10 +92,11 @@ fun main(args: Array<String>) {
 
 
                 competition.inputTag = args[1]
-                competition.classesPath = args[2] //way to path with classes
-                competition.coursesPath = args[3] //way to path with courses
-                competition.splitsPath = args[4] //way to path with splits
+                competition.classesPath = args[2] //path to file with classes
+                competition.coursesPath = args[3] //path to file with courses
+                competition.splitsPath = args[4] //path to foldr with splits
                 generateResults(competition)
+                generateTeamResults(competition)
 
             }
             else -> {
