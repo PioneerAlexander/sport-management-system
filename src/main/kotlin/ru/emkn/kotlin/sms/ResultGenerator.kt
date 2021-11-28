@@ -145,8 +145,6 @@ fun timeDifference(start: LocalTime, finish: LocalTime): LocalTime =
         .minusSeconds(start.second.toLong())
 
 fun ratioOfTwoTimes(numerator: LocalTime, denominator: LocalTime): Double {
-    val a = (3600 * numerator.hour + 60 * numerator.minute + numerator.second).toDouble() /
+    return (3600 * numerator.hour + 60 * numerator.minute + numerator.second).toDouble() /
             (3600 * denominator.hour + 60 * denominator.minute + denominator.second)
-    println(a)
-    return a
 }
