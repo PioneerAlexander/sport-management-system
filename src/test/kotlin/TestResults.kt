@@ -25,8 +25,8 @@ internal class finalResult{
         competition.splitsPath =  "src/test/resources/finResTestData/splits"
         generateResults(competition,"src/test/resources/finResTestData/rezF")
         generateTeamResults(competition, "src/test/resources/finResTestData/rezF")
-        //val a = File("src/test/resources/finResTestData/rezF/teamResults.csv").readText()
-        //val b = File("src/test/resources/finResTestData/teamResults.csv").readText()
-        assertEquals(1,1)
+        val a = File("src/test/resources/finResTestData/rezF/teamResults.csv").readText()
+        val b = File("src/test/resources/finResTestData/teamResults.csv").readText()
+        assertEquals(b,a)
     }
 }
