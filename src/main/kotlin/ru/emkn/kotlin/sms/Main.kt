@@ -90,11 +90,13 @@ fun main(args: Array<String>) {
                 checkArgsSize(args, 5)
                 val competition = recreateSavedCompetition()
 
+
                 competition.inputTag = args[1]
                 competition.classesPath = args[2] //way to path with classes
                 competition.coursesPath = args[3] //way to path with courses
                 competition.splitsPath = args[4] //way to path with splits
                 generateResults(competition)
+
             }
             else -> {
                 println("change first argument of command line to 'start' or 'finish' and try again!")
