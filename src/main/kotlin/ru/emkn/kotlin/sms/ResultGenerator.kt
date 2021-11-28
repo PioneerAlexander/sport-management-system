@@ -60,10 +60,13 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                         )
                     )
                 } else {  //все честные кроме победителя
-                    participant.points = max(0,2 * (100 - ratioOfTwoTimes(
-                        timeDifference(participant.startTime, participant.finishTime),
-                        winnerTime
-                    )).toInt())
+                    participant.points = max(
+                        0,
+                        (100 * (2.0 - ratioOfTwoTimes(
+                            timeDifference(participant.startTime, participant.finishTime),
+                            winnerTime
+                        ))).toInt()
+                    )
                     writeRow(
                         listOf(
                             index + 1,
@@ -109,7 +112,8 @@ fun generateTeamResults(
     competition: Competition,
     outputPath: String = "comp"
 ) { //можно вызывать только после generateResults
-    val sortedOrganisations = competition.orgs.sortedByDescending { org: Organisation -> org.members.sumOf { it.points } }
+    val sortedOrganisations =
+        competition.orgs.sortedByDescending { org: Organisation -> org.members.sumOf { it.points } }
     csvWriter().open("$outputPath/teamResults.csv") {
         writeRow(
             listOf(
@@ -119,13 +123,15 @@ fun generateTeamResults(
                 "Результат",
             )
         )
-        for ((index, organisation) in competition.orgs.withIndex()) {
+        for ((index, organisation) in sortedOrganisations.withIndex()) {
             writeRow(
                 listOf(
                     index + 1,
                     organisation.name,
                     index + 1,
-                    organisation.members.sumOf { it.points }
+                    organisation.members.sumOf {
+                        it.points
+                    }
                 )
             )
         }

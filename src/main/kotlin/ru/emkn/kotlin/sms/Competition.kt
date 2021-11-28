@@ -43,8 +43,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
         }
 
 
-
-    fun createStartProtocols(targetPath:String = "comp") {
+    fun createStartProtocols(targetPath: String = "comp") {
         val f = File(targetPath, "startProtocols")
         f.mkdirs()
         val mappedParticipants = this.participants.groupBy { it.ageGroup }
@@ -76,7 +75,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
         }
     }
 
-    fun save(folderName:String = "comp") {
+    fun save(folderName: String = "comp") {
         csvWriter().open("$folderName/data.csv") {
             writeRow(this@Competition.name, this@Competition.date)
             writeRow(

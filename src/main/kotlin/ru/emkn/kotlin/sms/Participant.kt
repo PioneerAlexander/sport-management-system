@@ -13,7 +13,7 @@ class Participant(
 ) {
 
     companion object {
-        var mapOfStringDistance : Map<String, Distance> = mapOf()
+        var mapOfStringDistance: Map<String, Distance> = mapOf()
         var mapFromNumberToSplits: Map<String, List<Split>> = mapOf()
     }
 
@@ -56,16 +56,16 @@ class Participant(
         }
 
     fun isNotCheated(): Boolean {
-        if (!lightCheck()){
-            logger.info { "$this деквалифицирован из-за неверного количества контрольных пунктов" }
+        if (!lightCheck()) {
+            logger.info { "$this дисквалифицирован из-за неверного количества контрольных пунктов" }
             return false
         }
-        if (!startTimeCheck()){
-            logger.info { "$this деквалифицирован из-за неверного времени" }
+        if (!startTimeCheck()) {
+            logger.info { "$this дисквалифицирован из-за неверного времени" }
             return false
         }
-        if (!containerCheck()){
-            logger.info { "$this деквалифицирован из-за неверного прохождения контрольных пунктов" }
+        if (!containerCheck()) {
+            logger.info { "$this дисквалифицирован из-за неверного прохождения контрольных пунктов" }
             return false
         }
         return true

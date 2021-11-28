@@ -19,7 +19,7 @@ class Organisation(var name: String, val members: MutableList<Participant> = mut
         other as Organisation
 
         if (name != other.name) return false
-        if (!members.containsAll( other.members)) return false
+        if (!members.containsAll(other.members)) return false
 
         return true
     }
