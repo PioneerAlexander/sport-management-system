@@ -13,8 +13,8 @@ class Participant(
 ) {
 
     companion object {
-        var mapOfStringDistance : Map<String, Distance> = mapOf() // changing in classesPath setter
-        var mapFromNumberToSplits: Map<String, List<Split>> = mapOf() // Меняется в Competition при введении протоколов прохождения (in splitsPath setter)
+        var mapOfStringDistance : Map<String, Distance> = mapOf()
+        var mapFromNumberToSplits: Map<String, List<Split>> = mapOf()
     }
 
     var startNumber: String = ""
@@ -47,8 +47,7 @@ class Participant(
             return listOf()
         }
 
-    // промежуточные и финишный результаты (который обязательно последний)
-    val actualPath: List<Split> // список отсортирован по split.time
+    val actualPath: List<Split>
         get() {
             if (startNumber in mapFromNumberToSplits.keys) {
                 return mapFromNumberToSplits[startNumber]!!
@@ -74,18 +73,22 @@ class Participant(
 
     private fun lightCheck(): Boolean = (actualPath.size == checkpoints.size)
 
-    private fun startTimeCheck(): Boolean {
+
+    fun timeCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
+
         return (startTime < actualPath[0].time)
+
     }
 
-    private fun containerCheck(): Boolean {
+    fun containerCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
-        return checkpoints == actualPath.map { it.name }
+        val tempList = actualPath.map { it.name }
+        return checkpoints == tempList.subList(1, tempList.lastIndex)
     }
 
     override fun equals(other: Any?): Boolean {
