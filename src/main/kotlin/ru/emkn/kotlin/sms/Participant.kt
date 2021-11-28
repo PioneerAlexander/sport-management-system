@@ -74,21 +74,19 @@ class Participant(
     private fun lightCheck(): Boolean = (actualPath.size == checkpoints.size)
 
 
-    fun timeCheck(): Boolean {
+    private fun startTimeCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
-
         return (startTime < actualPath[0].time)
 
     }
 
-    fun containerCheck(): Boolean {
+    private fun containerCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
-        val tempList = actualPath.map { it.name }
-        return checkpoints == tempList.subList(1, tempList.lastIndex)
+        return checkpoints == actualPath.map { it.name }
     }
 
     override fun equals(other: Any?): Boolean {
