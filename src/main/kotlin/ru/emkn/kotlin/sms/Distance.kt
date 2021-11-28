@@ -3,7 +3,6 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import java.io.File
 import java.lang.IndexOutOfBoundsException
-import java.security.AlgorithmParameterGenerator
 import java.time.LocalTime
 
 
@@ -24,6 +23,7 @@ fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, D
     return generator
 }
 
+// последняя отметка должна быть фенилом
 fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): Map<String, List<String>> {
     require(File(filePath).isFile) { "No courses file" }
     val generatorOfMap = mutableMapOf<String, List<String>>()
@@ -43,7 +43,7 @@ fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): 
 
 //
 fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<String, List<Split>> {
-    val generator = mutableMapOf<String, List<Split>>()
+    val generator = mutableMapOf<String, MutableList<Split>>()
     csvReader().open(filePath) {
         readAllAsSequence().forEach { list ->
             try {
@@ -62,6 +62,7 @@ fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<S
             }
         }
     }
+    generator.sortSplits()
     return generator
 }
 
@@ -72,7 +73,7 @@ fun MutableMap<String, MutableList<Split>>.sortSplits() {
 }
 
 //tags: "ByParticipantNum" and "BySplitsName"
-fun splitsInputByParticipantNum(tag: String, directoryPath: String): Map<String, List<Split>> {
+fun splitsInput(tag: String, directoryPath: String): Map<String, List<Split>> {
     val generator = mutableMapOf<String, MutableList<Split>>()
     val directory = File(directoryPath)
     try {

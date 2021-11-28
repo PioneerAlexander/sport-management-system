@@ -37,7 +37,7 @@ internal class TestOfInput {
 
     @Test
     fun testOfSplitsInputByParticipantName() {
-        val a = splitsInputByParticipantNum("ByParticipantNum", "src/test/resources/splitsByNum")
+        val a = splitsInput("ByParticipantNum", "src/test/resources/splitsByNum")
         val b = mutableMapOf<String, List<Split>>()
         b["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),
@@ -56,7 +56,7 @@ internal class TestOfInput {
 
     @Test
     fun testOfSplitsInputBySplitsName() {
-        val a = splitsInputByParticipantNum("BySplitsName", "src/test/resources/splitsByName")
+        val a = splitsInput("BySplitsName", "src/test/resources/splitsByName")
         val b = mutableMapOf<String, List<Split>>()
         b["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),

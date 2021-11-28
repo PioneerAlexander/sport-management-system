@@ -13,8 +13,8 @@ class Participant(
 ) {
 
     companion object {
-        var mapOfStringDistance : Map<String, Distance> = mapOf()
-        var mapFromNumberToSplits: Map<String, List<Split>> = mapOf()
+        var mapOfStringDistance : Map<String, Distance> = mapOf() // changing in classesPath setter
+        var mapFromNumberToSplits: Map<String, List<Split>> = mapOf() // Меняется в Competition при введении протоколов прохождения (in splitsPath setter)
     }
 
     var startNumber: String = ""
@@ -47,7 +47,8 @@ class Participant(
             return listOf()
         }
 
-    val actualPath: List<Split>
+    // промежуточные и финишный результаты (который обязательно последний)
+    val actualPath: List<Split> // список отсортирован по split.time
         get() {
             if (startNumber in mapFromNumberToSplits.keys) {
                 return mapFromNumberToSplits[startNumber]!!
@@ -56,29 +57,29 @@ class Participant(
         }
 
     fun isNotCheated(): Boolean {
-        //return lightCheck() and (timeCheck()) and (containerCheck())
-        return true
+        if (!lightCheck()){
+            return false
+        }
+        if (!startTimeCheck()){
+            return false
+        }
+        return (containerCheck())
     }
 
-    fun lightCheck(): Boolean = (actualPath.size == checkpoints.size + 2)
+    private fun lightCheck(): Boolean = (actualPath.size == checkpoints.size + 1)
 
-    fun timeCheck(): Boolean {
+    private fun startTimeCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
-        var ans = (startTime == actualPath[0].time)
-        for (i in 1 until actualPath.size) {
-            ans = ans and (actualPath[i - 1].time < actualPath[i].time)
-        }
-        return ans
+        return (startTime > actualPath[0].time)
     }
 
-    fun containerCheck(): Boolean {
+    private fun containerCheck(): Boolean {
         if (actualPath.isEmpty()) {
             return false
         }
-        val tempList = actualPath.map { it.name }
-        return checkpoints == tempList.subList(1, tempList.lastIndex)
+        return checkpoints == actualPath.map { it.name }
     }
 
     override fun equals(other: Any?): Boolean {

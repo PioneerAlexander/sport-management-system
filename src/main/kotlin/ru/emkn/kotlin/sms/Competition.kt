@@ -7,7 +7,7 @@ import java.io.File
 import java.time.LocalTime
 
 class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
-
+    var inputTag: String = "ByParticipantNum" // TODO(учесть это в вводе) //tags: "ByParticipantNum" and "BySplitsName"
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 
@@ -32,7 +32,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     var splitsPath: String = "" //когда в соревнование первый раз передается splitsPath, меняется map в Participant
         set(value) {
-            Participant.mapFromNumberToSplits = getMapFromNumberToSplits(value)
+            Participant.mapFromNumberToSplits = splitsInput(inputTag, value)
             field = value
         }
 
