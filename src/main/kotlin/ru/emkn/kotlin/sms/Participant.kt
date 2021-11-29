@@ -39,7 +39,7 @@ class Participant(
         this.startTime.second.toString(),
     )
 
-    val checkpoints: List<String>
+    private val checkpoints: List<String>
         get() {
             if (ageGroup in mapOfStringDistance.keys) {
                 return mapOfStringDistance[ageGroup]!!.checkpoints
@@ -47,7 +47,7 @@ class Participant(
             return listOf()
         }
 
-    val actualPath: List<Split>
+    private val actualPath: List<Split>
         get() {
             if (startNumber in mapFromNumberToSplits.keys) {
                 return mapFromNumberToSplits[startNumber]!!

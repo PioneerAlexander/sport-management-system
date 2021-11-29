@@ -6,8 +6,69 @@ import kotlinx.datetime.*
 import java.io.File
 import java.time.LocalTime
 
+fun makeCompetition(pathEvent: String, targetPath: String = "comp"): Competition {
+    val mainDirectory = File(System.getProperty("user.dir"), targetPath) //currentWorkingDirectory
+    mainDirectory.mkdirs()
+    var eventName = ""
+    var eventDate = LocalDate.parse("2021-11-21")
+    check(File(pathEvent).exists()) {
+        logger.error { "Не существует файла с именем $pathEvent" }
+        "Не существует файла с именем $pathEvent"
+    }
+    csvReader().open(pathEvent) {
+        readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
+            check(row.size == 2) { "Нет названия или даты соревнования" }
+            eventName = checkMapElement(row["Название"])
+            eventDate = LocalDate(
+                checkMapElement(row["Дата"]).split('.')[2].toInt(),
+                checkMapElement(row["Дата"]).split('.')[1].toInt(),
+                checkMapElement(row["Дата"]).split('.')[0].toInt()
+            )
+        }
+    }
+    return Competition(eventName, eventDate)
+}
+
+fun recreateSavedCompetition(folderPath: String = "comp"): Competition {
+    var eventName = ""
+    var eventDate = LocalDate.parse("2021-11-21")
+    val allParticipants = mutableListOf<Participant>()
+    csvReader().open("$folderPath/data.csv") {
+        val listedNameDate = readNext()
+        require(listedNameDate != null) { "damaged data file" }
+        require(listedNameDate.isNotEmpty()) { "damaged data file" }
+        eventName = listedNameDate[0]
+        eventDate = LocalDate.parse(listedNameDate[1])
+        readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
+            val currentParticipant = Participant(
+                checkMapElement(row["Группа"]),
+                checkMapElement(row["Фамилия"]),
+                checkMapElement(row["Имя"]),
+                checkMapElement(row["Г.р."]),
+                checkMapElement(row["Разряд"]),
+                checkMapElement(row["Команда"]).trim()
+            )
+            currentParticipant.startNumber = checkMapElement(row["Номер"])
+            currentParticipant.startTime =
+                LocalTime.of(
+                    checkMapElement(row["Час"]).toInt(),
+                    checkMapElement(row["Минута"]).toInt(),
+                    checkMapElement(row["Секунда"]).toInt()
+                )
+            allParticipants.add(currentParticipant)
+        }
+    }
+    val organisations = mutableListOf<Organisation>()
+    val mappedParticipants = allParticipants.groupBy { it.organisation }
+    for (org in mappedParticipants.keys) {
+        val currentOrganisation = Organisation(org, mappedParticipants[org] as MutableList<Participant>)
+        organisations.add(currentOrganisation)
+    }
+    return Competition(eventName, eventDate, organisations.toList())
+}
+
 class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
-    var inputTag: String = "ByParticipantNum" // TODO(учесть это в вводе) tags: "ByParticipantNum" and "BySplitsName"
+    var inputTag: String = "ByParticipantNum"
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 
@@ -16,13 +77,12 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     fun addOrganisationsToCompetition(pathApplications: String) {
         val allOrgs = mutableListOf<Organisation>()
-        for (file in File(pathApplications).listFiles()) {
+        check(File(pathApplications).listFiles() != null) { "Нет организаций участников" }
+        for (file in File(pathApplications).listFiles()!!) {
             allOrgs.add(applicationToOrg(pathApplications + "/" + file.name))
         }
         this.orgs = allOrgs
     }
-
-    val sportClasses = getSportClasses()
 
     var classesPath: String = "" //когда в соревнование первый раз передается classesPath, меняется map в Participant
         set(value) {
@@ -44,8 +104,8 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
 
     fun createStartProtocols(targetPath: String = "comp") {
-        val f = File(targetPath, "startProtocols")
-        f.mkdirs()
+        val file = File(targetPath, "startProtocols")
+        file.mkdirs()
         val mappedParticipants = this.participants.groupBy { it.ageGroup }
         val numberLength = this.size.toString().length
         var startNumber = 0
@@ -128,24 +188,30 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     companion object {
 
-        fun getOrEmptyString(string: String?): String = string ?: ""
 
         fun applicationToOrg(fileName: String): Organisation {
             //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
             val org = Organisation()
             csvReader().open(fileName) {
-                org.name = readNext()!![0]
-                readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-                    org.addMember(
-                        Participant(
-                            getOrEmptyString(row["Группа"]),
-                            getOrEmptyString(row["Фамилия"]),
-                            getOrEmptyString(row["Имя"]),
-                            getOrEmptyString(row["Г.р."]),
-                            getOrEmptyString(row["Разр."]),
-                            org.name
+                val firstStringList = readNext()
+                try {
+                    check(firstStringList != null)
+                    check(firstStringList.isNotEmpty())
+                    org.name = firstStringList[0]
+                    readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
+                        org.addMember(
+                            Participant(
+                                checkMapElement(row["Группа"]),
+                                checkMapElement(row["Фамилия"]),
+                                checkMapElement(row["Имя"]),
+                                checkMapElement(row["Г.р."]),
+                                checkMapElement(row["Разр."]),
+                                org.name
+                            )
                         )
-                    )
+                    }
+                } catch (e: Exception) {
+                    "Некорректный протокол организации"
                 }
             }
             return org
@@ -155,7 +221,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 }
 
 
-fun LocalTime.forPrint(): String { //не обрезать конец строки если в секундах нули
+fun LocalTime.forPrint(): String { //не обрезать конец строки, если в секундах нули
     val buf = StringBuilder(18)
     val hourValue = hour
     val minuteValue = minute

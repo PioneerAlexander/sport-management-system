@@ -9,11 +9,11 @@ import java.time.LocalTime
 fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
     val generator = mutableMapOf<String, Distance>()
     try {
-        require(File(filePath).isFile) { "No courses file" }
+        check(File(filePath).isFile) { "No courses file" }
         csvReader().open(filePath) {
             readNext()
             readAllAsSequence().forEach {
-                require(it.size == 2) { "Wrong classes file" }
+                check(it.size == 2) { "Wrong classes file" }
                 generator[it[0]] = Distance(it[1])
             }
         }
@@ -25,7 +25,7 @@ fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, D
 
 // последняя отметка должна быть фенилом
 fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): Map<String, List<String>> {
-    require(File(filePath).isFile) { "No courses file" }
+    check(File(filePath).isFile) { "No courses file" }
     val generatorOfMap = mutableMapOf<String, List<String>>()
     try {
         csvReader().open(filePath) {
@@ -41,30 +41,6 @@ fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): 
     return generatorOfMap
 }
 
-//
-fun getMapFromNumberToSplits(filePath: String = "sample-data/splits.csv"): Map<String, List<Split>> {
-    val generator = mutableMapOf<String, MutableList<Split>>()
-    csvReader().open(filePath) {
-        readAllAsSequence().forEach { list ->
-            try {
-                require(list.isNotEmpty())
-                val key = list[0]
-                val smth = list.subList(1, list.lastIndex + 1).filter { it != "" }
-                require(smth.size % 2 == 0) { "actual size is ${smth.size}" }
-                val listGenerator = mutableListOf<Split>()
-                for (i in smth.indices step 2) {
-                    val tempIterable = smth[i + 1].split(":").map { it.toInt() }
-                    listGenerator.add(Split(smth[i], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
-                }
-                generator[key] = listGenerator
-            } catch (ex: Exception) {
-                logger.warn { "Частично неверные данные в $filePath" }
-            }
-        }
-    }
-    generator.sortSplits()
-    return generator
-}
 
 fun MutableMap<String, MutableList<Split>>.sortSplits() {
     this.forEach { list ->
@@ -82,7 +58,7 @@ fun splitsInput(tag: String, directoryPath: String): Map<String, List<Split>> {
             logger.error { "Протоколы похождения дистанции не найдены" }
             return generator
         }
-        for (file in directory.listFiles()) {
+        for (file in directory.listFiles()!!) {
             try {
                 if (tag == "ByParticipantNum") {
                     generator.addSplitsNameTimeFromFile(file)
@@ -103,21 +79,21 @@ fun splitsInput(tag: String, directoryPath: String): Map<String, List<Split>> {
 
 fun MutableMap<String, MutableList<Split>>.addSplitsNameTimeFromFile(file: File) {
     csvReader().open(file) {
-        val numL = readNext()
-        if (numL != null) {
-            readAllAsSequence().forEach {
-                val num = numL[0]
-                val tempIterable = it[1].split(":").map { it.toInt() }
+        val numList = readNext()
+        if (numList != null) {
+            readAllAsSequence().forEach { list ->
+                val num = numList[0]
+                val tempIterable = list[1].split(":").map { it.toInt() }
                 if (num in this@addSplitsNameTimeFromFile.keys) {
                     this@addSplitsNameTimeFromFile[num]?.add(
                         Split(
-                            it[0],
+                            list[0],
                             LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])
                         )
                     )
                 } else {
                     this@addSplitsNameTimeFromFile[num] =
-                        mutableListOf(Split(it[0], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
+                        mutableListOf(Split(list[0], LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
                 }
             }
         } else {
@@ -128,20 +104,20 @@ fun MutableMap<String, MutableList<Split>>.addSplitsNameTimeFromFile(file: File)
 
 fun MutableMap<String, MutableList<Split>>.addSplitsParticipantNameTimeFile(file: File) {
     csvReader().open(file) {
-        val nameL = readNext()
-        if (nameL != null) {
-            readAllAsSequence().forEach {
-                val name = nameL[0]
-                val tempIterable = it[1].split(":").map { it.toInt() }
-                if (it[0] in this@addSplitsParticipantNameTimeFile.keys) {
-                    this@addSplitsParticipantNameTimeFile[it[0]]?.add(
+        val nameList = readNext()
+        if (nameList != null) {
+            readAllAsSequence().forEach { list ->
+                val name = nameList[0]
+                val tempIterable = list[1].split(":").map { it.toInt() }
+                if (list[0] in this@addSplitsParticipantNameTimeFile.keys) {
+                    this@addSplitsParticipantNameTimeFile[list[0]]?.add(
                         Split(
                             name,
                             LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])
                         )
                     )
                 } else {
-                    this@addSplitsParticipantNameTimeFile[it[0]] =
+                    this@addSplitsParticipantNameTimeFile[list[0]] =
                         mutableListOf(Split(name, LocalTime.of(tempIterable[0], tempIterable[1], tempIterable[2])))
                 }
             }
@@ -160,13 +136,10 @@ class Distance(val name: String) {
         var mapOfDistancesCheckpoints: Map<String, List<String>> = mapOf()
     }
 
-
-    // TODO(названия немного отличающиеся от заданных работают некорректно)
-    // TODO( "Ж16  студенты"(from courses.csv) != "Ж16 студенты"(from classes.csv))
-
     val checkpoints: List<String>
         get() {
             if (name in mapOfDistancesCheckpoints.keys) {
+                require(mapOfDistancesCheckpoints[name] != null)
                 return mapOfDistancesCheckpoints[name]!!
             }
             return listOf()

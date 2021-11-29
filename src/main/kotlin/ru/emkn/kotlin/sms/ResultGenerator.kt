@@ -40,6 +40,7 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                 finishTimeToParticipant(participant, mapFromNumberToSplits)
             }
             var winnerTime = LocalTime.of(0, 0, 0, 0)
+
             for (participant in sortedByAgeGroup[ageGroup]!! //только те, кто честно финишировал
                 .filter { it.isNotCheated() }
                 .sortedBy { timeDifference(it.startTime, it.finishTime) }) {

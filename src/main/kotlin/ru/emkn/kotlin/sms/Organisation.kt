@@ -9,7 +9,7 @@ class Organisation(var name: String, val members: MutableList<Participant> = mut
     }
 
     override fun toString(): String {
-        return "${this.name}"
+        return this.name
     }
 
     override fun equals(other: Any?): Boolean {
