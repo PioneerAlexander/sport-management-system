@@ -58,13 +58,11 @@ fun recreateSavedCompetition(folderPath: String = "comp"): Competition {
             allParticipants.add(currentParticipant)
         }
     }
-    val organisations = mutableListOf<Organisation>()
+
     val mappedParticipants = allParticipants.groupBy { it.organisation }
-    for (org in mappedParticipants.keys) {
-        val currentOrganisation = Organisation(org, mappedParticipants[org] as MutableList<Participant>)
-        organisations.add(currentOrganisation)
-    }
-    return Competition(eventName, eventDate, organisations.toList())
+    val organisations = mappedParticipants.map { Organisation(it.key, it.value) }
+
+    return Competition(eventName, eventDate, organisations)
 }
 
 class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
