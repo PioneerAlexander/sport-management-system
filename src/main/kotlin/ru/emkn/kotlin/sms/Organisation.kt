@@ -1,12 +1,8 @@
 package ru.emkn.kotlin.sms
 
-class Organisation(var name: String, val members: MutableList<Participant> = mutableListOf()) {
+class Organisation(val name: String, val members: List<Participant> = listOf()) {
 
     constructor() : this("")
-
-    fun addMember(participant: Participant) {
-        this.members.add(participant)
-    }
 
     override fun toString(): String {
         return this.name

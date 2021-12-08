@@ -191,22 +191,23 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
         fun applicationToOrg(fileName: String): Organisation {
             //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
-            val org = Organisation()
+            var name = ""
+            val members: MutableList<Participant> = mutableListOf()
             csvReader().open(fileName) {
                 val firstStringList = readNext()
                 try {
                     check(firstStringList != null)
                     check(firstStringList.isNotEmpty())
-                    org.name = firstStringList[0]
+                    name = firstStringList[0]
                     readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
-                        org.addMember(
+                        members.add(
                             Participant(
                                 checkMapElement(row["Группа"]),
                                 checkMapElement(row["Фамилия"]),
                                 checkMapElement(row["Имя"]),
                                 checkMapElement(row["Г.р."]),
                                 checkMapElement(row["Разр."]),
-                                org.name
+                                name
                             )
                         )
                     }
@@ -214,7 +215,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
                     "Некорректный протокол организации"
                 }
             }
-            return org
+            return Organisation(name, members)
         }
     }
 
