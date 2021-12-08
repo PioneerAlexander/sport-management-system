@@ -33,8 +33,8 @@ fun main(args: Array<String>) {
                 val competition = makeCompetition(args[1], args[3]) //path to file event.csv
 
                 competition.addOrganisationsToCompetition(args[2]) //way to directory with applications
-                competition.createStartProtocols(args[3])
-                competition.save(args[3]) //saves start log in the path with pathName 'comp'
+                createStartProtocols(args[3], competition)
+                saveCompetition(args[3], competition) //saves start log in the path with pathName 'comp'
             }
             "finish" -> {
                 checkArgsSize(args, 6)

@@ -13,8 +13,8 @@ internal class Test1 {
         val pathApplications = "sample-data/applications"
         val comp = makeCompetition(pathEvent, targetPath)
         comp.addOrganisationsToCompetition(pathApplications)
-        comp.createStartProtocols()
-        comp.save(targetPath)
+        createStartProtocols(targetPath, comp)
+        saveCompetition(targetPath, comp)
 
         val comp1 = recreateSavedCompetition(targetPath)
 

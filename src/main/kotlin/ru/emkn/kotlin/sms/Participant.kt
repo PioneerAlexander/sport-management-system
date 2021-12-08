@@ -39,7 +39,7 @@ class Participant(
         this.startTime.second.toString(),
     )
 
-    private val checkpoints: List<String>
+    val checkpoints: List<String>
         get() {
             if (ageGroup in mapOfStringDistance.keys) {
                 return mapOfStringDistance[ageGroup]!!.checkpoints
@@ -47,7 +47,7 @@ class Participant(
             return listOf()
         }
 
-    private val actualPath: List<Split>
+    val actualPath: List<Split>
         get() {
             if (startNumber in mapFromNumberToSplits.keys) {
                 return mapFromNumberToSplits[startNumber]!!
@@ -55,39 +55,8 @@ class Participant(
             return listOf()
         }
 
-    fun isNotCheated(): Boolean {
-        if (!lightCheck()) {
-            logger.info { "$this дисквалифицирован из-за неверного количества контрольных пунктов" }
-            return false
-        }
-        if (!startTimeCheck()) {
-            logger.info { "$this дисквалифицирован из-за неверного времени" }
-            return false
-        }
-        if (!containerCheck()) {
-            logger.info { "$this дисквалифицирован из-за неверного прохождения контрольных пунктов" }
-            return false
-        }
-        return true
-    }
-
-    private fun lightCheck(): Boolean = (actualPath.size == checkpoints.size)
-
-
-    private fun startTimeCheck(): Boolean {
-        if (actualPath.isEmpty()) {
-            return false
-        }
-        return (startTime < actualPath[0].time)
-
-    }
-
-    private fun containerCheck(): Boolean {
-        if (actualPath.isEmpty()) {
-            return false
-        }
-        return checkpoints == actualPath.map { it.name }
-    }
+    val isNotCheated: Boolean
+        get() = isNotCheated(this)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
