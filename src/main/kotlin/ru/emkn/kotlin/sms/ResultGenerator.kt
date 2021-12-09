@@ -42,7 +42,7 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
             var winnerTime = LocalTime.of(0, 0, 0, 0)
 
             for (participant in sortedByAgeGroup[ageGroup]!! //только те, кто честно финишировал
-                .filter { it.isNotCheated }
+                .filter { it.isNotCheated() }
                 .sortedBy { timeDifference(it.startTime, it.finishTime) }) {
                 if (index == 0) {  //отдельно победителя записываем
                     winnerTime = timeDifference(participant.startTime, participant.finishTime)
@@ -91,7 +91,7 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                 index += 1
             }
             for (participant in sortedByAgeGroup[ageGroup]!! //кто нечестно финишировал
-                .filter { !(it.isNotCheated) }) {
+                .filter { !(it.isNotCheated()) }) {
                 writeRow(
                     listOf(
                         index + 1,

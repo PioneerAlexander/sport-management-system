@@ -1,26 +1,18 @@
 package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.*
+import ru.emkn.kotlin.sms.InputTag.*
 import ru.emkn.kotlin.sms.Organisation.Companion.applicationToOrg
 import java.io.File
 
 
 class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
-    var inputTag: String = "ByParticipantNum"
+    var inputTag = ByParticipantNum
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 
     val size: Int
         get() = this.participants.size
-
-    fun addOrganisationsToCompetition(pathApplications: String) {
-        val allOrgs = mutableListOf<Organisation>()
-        check(File(pathApplications).listFiles() != null) { "Нет организаций участников" }
-        for (file in File(pathApplications).listFiles()!!) {
-            allOrgs.add(applicationToOrg(pathApplications + "/" + file.name))
-        }
-        this.orgs = allOrgs
-    }
 
     var classesPath: String = "" //когда в соревнование первый раз передается classesPath, меняется map в Participant
         set(value) {

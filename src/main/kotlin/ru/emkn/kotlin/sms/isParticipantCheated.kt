@@ -1,30 +1,30 @@
 package ru.emkn.kotlin.sms
 
-fun isNotCheated(participant: Participant): Boolean {
-    if (participant.actualPath.size != participant.checkpoints.size) {  //lightCheck
-        logger.info { "$participant дисквалифицирован из-за неверного количества контрольных пунктов" }
+fun Participant.isNotCheated(): Boolean {
+    if (this.actualPath.size != this.checkpoints.size) {  //lightCheck
+        logger.info { "$this дисквалифицирован из-за неверного количества контрольных пунктов" }
         return false
     }
     fun startTimeCheck(): Boolean {
-        if (participant.actualPath.isEmpty()) {
+        if (this.actualPath.isEmpty()) {
             return false
         }
-        return (participant.startTime < participant.actualPath[0].time)
+        return (this.startTime < this.actualPath[0].time)
     }
 
     if (!startTimeCheck()) {
-        logger.info { "$participant дисквалифицирован из-за неверного времени" }
+        logger.info { "$this дисквалифицирован из-за неверного времени" }
         return false
     }
     fun containerCheck(): Boolean {
-        if (participant.actualPath.isEmpty()) {
+        if (this.actualPath.isEmpty()) {
             return false
         }
-        return participant.checkpoints == participant.actualPath.map { it.name }
+        return this.checkpoints == this.actualPath.map { it.name }
     }
 
     if (!containerCheck()) {
-        logger.info { "$participant дисквалифицирован из-за неверного прохождения контрольных пунктов" }
+        logger.info { "$this дисквалифицирован из-за неверного прохождения контрольных пунктов" }
         return false
     }
     return true

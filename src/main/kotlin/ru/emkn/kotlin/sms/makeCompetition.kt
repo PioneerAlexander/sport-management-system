@@ -4,8 +4,13 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import java.io.File
 
+fun addOrganisations(pathApplications: String): List<Organisation> {
+    check(File(pathApplications).listFiles() != null) { "Нет организаций участников" }
 
-fun makeCompetition(pathEvent: String, targetPath: String = "comp"): Competition {
+    return File(pathApplications).listFiles()!!.map { Organisation.applicationToOrg(pathApplications + "/" + it.name) }
+}
+
+fun makeCompetition(pathEvent: String, targetPath: String = "comp", pathApplications: String): Competition {
     val mainDirectory = File(System.getProperty("user.dir"), targetPath) //currentWorkingDirectory
     mainDirectory.mkdirs() //это место мы доделали, здесь создается директория
     var eventName = ""
@@ -28,5 +33,5 @@ fun makeCompetition(pathEvent: String, targetPath: String = "comp"): Competition
             )
         }
     }
-    return Competition(eventName, eventDate)
+    return Competition(eventName, eventDate, addOrganisations(pathApplications))
 }

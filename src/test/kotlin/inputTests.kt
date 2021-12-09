@@ -1,4 +1,6 @@
 import ru.emkn.kotlin.sms.*
+import ru.emkn.kotlin.sms.InputTag.ByParticipantNum
+import ru.emkn.kotlin.sms.InputTag.BySplitsName
 import java.time.LocalTime
 import kotlin.test.*
 
@@ -28,7 +30,7 @@ internal class TestOfInput {
 
     @Test
     fun testOfSplitsInputByParticipantName() {
-        val actual = splitsInput("ByParticipantNum", "src/test/resources/splitsByNum")
+        val actual = splitsInput(ByParticipantNum, "src/test/resources/splitsByNum")
         val expected = mutableMapOf<String, List<Split>>()
         expected["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),
@@ -47,7 +49,7 @@ internal class TestOfInput {
 
     @Test
     fun testOfSplitsInputBySplitsName() {
-        val actual = splitsInput("BySplitsName", "src/test/resources/splitsByName")
+        val actual = splitsInput(InputTag.BySplitsName, "src/test/resources/splitsByName")
         val expected = mutableMapOf<String, List<Split>>()
         expected["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),

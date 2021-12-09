@@ -1,10 +1,14 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import ru.emkn.kotlin.sms.InputTag.*
 import java.io.File
 import java.lang.IndexOutOfBoundsException
 import java.time.LocalTime
 
+enum class InputTag {
+    ByParticipantNum, BySplitsName
+}
 
 fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
     val generator = mutableMapOf<String, Distance>()
@@ -49,7 +53,7 @@ fun MutableMap<String, MutableList<Split>>.sortSplits() {
 }
 
 //tags: "ByParticipantNum" and "BySplitsName"
-fun splitsInput(tag: String, directoryPath: String): Map<String, List<Split>> {
+fun splitsInput(tag: InputTag, directoryPath: String): Map<String, List<Split>> {
     val generator = mutableMapOf<String, MutableList<Split>>()
     val directory = File(directoryPath)
     try {
@@ -60,7 +64,7 @@ fun splitsInput(tag: String, directoryPath: String): Map<String, List<Split>> {
         }
         for (file in directory.listFiles()!!) {
             try {
-                if (tag == "ByParticipantNum") {
+                if (tag == ByParticipantNum) {
                     generator.addSplitsNameTimeFromFile(file)
                 } else {
                     generator.addSplitsParticipantNameTimeFile(file)

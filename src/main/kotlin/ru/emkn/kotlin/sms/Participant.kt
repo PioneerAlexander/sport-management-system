@@ -55,9 +55,6 @@ class Participant(
             return listOf()
         }
 
-    val isNotCheated: Boolean
-        get() = isNotCheated(this)
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -87,6 +84,4 @@ class Participant(
         result = 31 * result + startTime.hashCode()
         return result
     }
-
-
 }
