@@ -24,30 +24,57 @@ class ParticipantsPaths(private val participant: Participant) {
         val maps = mapsGenerator()
     }
 
+
+    val ageGroup: String
+        get() = participant.ageGroup
+    val surname: String
+        get() = participant.surname
+    val name: String
+        get() = participant.name
+    val birthYear: String
+        get() = participant.birthYear
+    val sportsCategory: String
+        get() = participant.sportsCategory
+    val organisation: String
+        get() = participant.organisation
+    val startNumber: String
+        get() = participant.startNumber
+    val startTime: LocalTime
+        get() = participant.startTime
+
+    val finishTime: LocalTime
+
+    init {
+        if (maps.numToActualPath[startNumber] == null){
+            logger.warn { "Не найдена информация о прохождении дистанции участником $startNumber" }
+        }
+        finishTime = maps.numToActualPath[startNumber]!!.list.last().time // null check is done upper
+    }
+
     val checkpoints: NeededPath
         get() {
-            if (maps.groupToNeededPath[participant.ageGroup] == null) {
-                logger.warn { "Не найдена информация о дистанции возрастной группы ${participant.ageGroup}" }
+            if (maps.groupToNeededPath[ageGroup] == null) {
+                logger.warn { "Не найдена информация о дистанции возрастной группы $ageGroup" }
                 return NeededPath(listOf()) // empty list
             }
-            return maps.groupToNeededPath[participant.ageGroup]!! //null check is done upper
+            return maps.groupToNeededPath[ageGroup]!! //null check is done upper
         }
     val actualPath: ActualPath
         get() {
-            if (maps.numToActualPath[participant.startNumber] == null) {
-                logger.warn { "Не найдена информация о прохождении дистанции участником ${participant.startNumber}" }
+            if (maps.numToActualPath[startNumber] == null) {
+                logger.warn { "Не найдена информация о прохождении дистанции участником $startNumber" }
                 return ActualPath(listOf())
             }
-            return maps.numToActualPath[participant.startNumber]!! // null check is done upper
+            return maps.numToActualPath[startNumber]!! // null check is done upper
         }
 
     fun isNotCited(): Boolean {
         if (!startTimeCheck()) {
-            logger.info { "Участник номе ${participant.startNumber} дисквалифицирован" }
+            logger.info { "Участник номе $startNumber дисквалифицирован" }
             return false
         }
         if (!containerCheck()) {
-            logger.info { "Участник номе ${participant.startNumber} дисквалифицирован" }
+            logger.info { "Участник номе $startNumber дисквалифицирован" }
             return false
         }
         return true
@@ -57,7 +84,7 @@ class ParticipantsPaths(private val participant: Participant) {
         if (this.actualPath.list.isEmpty()) {
             return false
         }
-        return (participant.startTime < this.actualPath.list[0].time)
+        return (startTime < this.actualPath.list[0].time)
     }
 
     private fun containerCheck(): Boolean {
