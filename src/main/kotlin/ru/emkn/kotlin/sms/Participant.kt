@@ -2,7 +2,6 @@ package ru.emkn.kotlin.sms
 
 import java.time.LocalTime
 
-
 class Participant(
     val ageGroup: String,
     val surname: String,
@@ -12,15 +11,11 @@ class Participant(
     val organisation: String
 ) {
 
-    companion object {
-        var mapOfStringDistance: Map<String, Distance> = mapOf()
-        var mapFromNumberToSplits: Map<String, List<Split>> = mapOf()
-    }
 
     var startNumber: String = ""
     var startTime: LocalTime = LocalTime.of(0, 0, 0, 0)
-    var finishTime: LocalTime = LocalTime.of(0, 0, 0, 0)
     var points: Int = 0
+
 
     override fun toString(): String {
         return "${this.surname} ${this.name}"
@@ -39,21 +34,40 @@ class Participant(
         this.startTime.second.toString(),
     )
 
-    val checkpoints: List<String>
-        get() {
-            if (ageGroup in mapOfStringDistance.keys) {
-                return mapOfStringDistance[ageGroup]!!.checkpoints
-            }
-            return listOf()
-        }
+    val finishTime
+        get() = ParticipantsPath(this).finishTime
 
-    val actualPath: List<Split>
-        get() {
-            if (startNumber in mapFromNumberToSplits.keys) {
-                return mapFromNumberToSplits[startNumber]!!
-            }
-            return listOf()
+    val checkpoints: NeededPath
+        get() = ParticipantsPath(this).checkpoints
+
+    val actualPath: ActualPath
+        get() = ParticipantsPath(this).actualPath
+
+    fun isNotCheated(): Boolean {
+        if (!startTimeCheck()) {
+            logger.info { "Участник номе $startNumber дисквалифицирован" }
+            return false
         }
+        if (!containerCheck()) {
+            logger.info { "Участник номе $startNumber дисквалифицирован" }
+            return false
+        }
+        return true
+    }
+
+    private fun startTimeCheck(): Boolean {
+        if (this.actualPath.list.isEmpty()) {
+            return false
+        }
+        return (startTime < this.actualPath.list[0].time)
+    }
+
+    private fun containerCheck(): Boolean {
+        if (this.actualPath.list.isEmpty()) {
+            return false
+        }
+        return this.checkpoints.list == this.actualPath.list.map { it.name }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -84,4 +98,6 @@ class Participant(
         result = 31 * result + startTime.hashCode()
         return result
     }
+
+
 }

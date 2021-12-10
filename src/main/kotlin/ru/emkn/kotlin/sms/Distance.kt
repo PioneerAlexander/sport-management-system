@@ -132,7 +132,7 @@ fun MutableMap<String, MutableList<Split>>.addSplitsParticipantNameTimeFile(file
 }
 
 
-data class Split(val name: String, val time: LocalTime)
+
 
 
 class Distance(val name: String) {

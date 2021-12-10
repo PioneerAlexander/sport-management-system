@@ -4,17 +4,10 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.time.LocalTime
 import kotlin.math.max
 
-fun finishTimeToParticipant(participant: Participant, mapFromNumberToSplits: Map<String, List<Split>>) {
-
-    if (participant.startNumber in mapFromNumberToSplits.keys) {
-        participant.finishTime = mapFromNumberToSplits[participant.startNumber]!!.last().time
-    }
-}
 
 fun generateResults(competition: Competition, outputPath: String = "comp") {
 
     val participants = competition.participants
-    val mapFromNumberToSplits = Participant.mapFromNumberToSplits
     val sortedByAgeGroup = participants.groupBy { it.ageGroup }
 
     csvWriter().open("$outputPath/results.csv") {
@@ -36,9 +29,6 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                     "Отставание"
                 )
             )
-            for (participant in participants) { //Для всех добавляем финишное время
-                finishTimeToParticipant(participant, mapFromNumberToSplits)
-            }
             var winnerTime = LocalTime.of(0, 0, 0, 0)
 
             for (participant in sortedByAgeGroup[ageGroup]!! //только те, кто честно финишировал
