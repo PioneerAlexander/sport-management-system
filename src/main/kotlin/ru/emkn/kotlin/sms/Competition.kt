@@ -16,13 +16,13 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     var classesPath: String = "" //когда в соревнование первый раз передается classesPath, меняется map в Participant
         set(value) {
-            Participant.mapOfStringDistance = getSportClasses(value)
+            //Participant.mapOfStringDistance = getSportClasses(value)
             field = value
         }
 
     var splitsPath: String = "" //когда в соревнование первый раз передается splitsPath, меняется map в Participant
         set(value) {
-            Participant.mapFromNumberToSplits = splitsInput(inputTag, value)
+            //Participant.mapFromNumberToSplits = splitsInput(inputTag, value)
             field = value
         }
 
