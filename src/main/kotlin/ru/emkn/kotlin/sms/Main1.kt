@@ -39,13 +39,13 @@ fun main(args: Array<String>) {
             "finish" -> {
                 checkArgsSize(args, 6)
                 val competition = recreateSavedCompetition(args[5])
-                competition.inputTag = when (args[1]) {
+                Input.inputTag = when (args[1]) {
                     "BySplitsName" -> BySplitsName
                     else -> ByParticipantNum
                 }
-                //competition.classesPath = args[2] //path to file with classes
-                //competition.coursesPath = args[3] //path to file with courses
-                //competition.splitsPath = args[4] //path to foldr with splits
+                Input.classesPath = args[2] //path to file with classes
+                Input.coursesPath = args[3] //path to file with courses
+                Input.splitsPath = args[4] //path to foldr with splits
                 generateResults(competition, args[5])
                 generateTeamResults(competition, args[5])
 

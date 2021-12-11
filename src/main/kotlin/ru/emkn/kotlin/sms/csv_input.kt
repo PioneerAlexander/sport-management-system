@@ -11,6 +11,15 @@ enum class InputTag {
     ByParticipantNum, BySplitsName
 }
 
+class Input{
+    companion object{
+        var inputTag: InputTag = ByParticipantNum
+        var classesPath: String = ""
+        var coursesPath: String = ""
+        var splitsPath: String = ""
+    }
+}
+
 data class Distance(val name: String)
 
 
@@ -22,9 +31,9 @@ fun List<String>?.nullToEmpty(): List<String> {
     return this
 }
 
-fun getMapGroupToNeededPath(): Map<String, NeededPath> {
-    val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints()
-    return getSportClasses().mapValues { checkpoint ->
+fun getMapGroupToNeededPath(classesPath: String, coursesPath:String): Map<String, NeededPath> {
+    val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints(coursesPath)
+    return getSportClasses(classesPath).mapValues { checkpoint ->
         NeededPath(mapOfDistancesCheckpoints[checkpoint.value.name].nullToEmpty()
             .map { PathSingletons(1, listOf(it)) })
     }

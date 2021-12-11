@@ -1,5 +1,4 @@
 package ru.emkn.kotlin.sms
-
 import java.time.LocalTime
 
 data class PathSingletons(val numberOfVisits: Int, val checkpointsOptions: List<String>)
@@ -21,8 +20,8 @@ fun mapsGenerator(): MapsForParticipant { // <- INPUT
 
 fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
     return MapsForParticipant(
-        getMapGroupToNeededPath(),
-        splitsInput(InputTag.ByParticipantNum, "")
+        getMapGroupToNeededPath(Input.classesPath, Input.coursesPath),
+        splitsInput(Input.inputTag, Input.splitsPath)
     )
 }
 
@@ -71,4 +70,3 @@ class ParticipantsPath(private val participant: Participant) {
             return maps.numToActualPath[participant.startNumber]!!.list.last().time // null check is done upper
         }
 }
-
