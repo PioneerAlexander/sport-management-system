@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyShortcut
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.useResource
 import androidx.compose.ui.unit.TextUnit
@@ -34,6 +36,10 @@ enum class State {
 
 var state = State.ZERO
 
+var pathDirectory = ""
+var pathEvent = ""
+var pathApplications = ""
+
 fun main() = application {
     Window(onCloseRequest = ::exitApplication,
             title = "ЭСПСС (Электронная система проведения спортивных соревнований)",
@@ -43,6 +49,7 @@ fun main() = application {
     {
         when (state) {
             State.ZERO -> ZeroState()
+            State.IMPORT -> ImportState()
             else -> ZeroState()
         }
     }
@@ -99,7 +106,7 @@ fun ZeroState() {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = { state = State.DOCS },
+        Button(onClick = { state = State.IMPORT },
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
@@ -112,23 +119,49 @@ fun ZeroState() {
             )
         }
     }
-}
-
-@Composable
-fun DocsState() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Button(onClick = { state = State.DOCS },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-        )
-
-        {
+    Row(modifier = Modifier.fillMaxHeight())
+    {
+        Column(modifier = Modifier.fillMaxWidth().align(Alignment.Bottom)) {
             Text(
-                    modifier = Modifier.align(Alignment.Top),
-                    text = "Документация"
+                    modifier = Modifier.align(Alignment.End),
+                    text = "© unnamed team",
+                    color = Color.Black,
+                    fontSize = 10.sp
             )
         }
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ImportState() {
+    Column(modifier = Modifier.fillMaxWidth()){
+        TextField(
+                modifier = Modifier.onPreviewKeyEvent {
+                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
+                }.align(Alignment.CenterHorizontally),
+                value = pathDirectory,
+                onValueChange = { pathDirectory = it },
+                placeholder = { Text("Папка для сохранения.") }
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        TextField(
+                modifier = Modifier.onPreviewKeyEvent {
+                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
+                }.align(Alignment.CenterHorizontally),
+                value = pathEvent,
+                onValueChange = { pathEvent = it },
+                placeholder = { Text("Файл соревнования.") }
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        TextField(
+                modifier = Modifier.onPreviewKeyEvent {
+                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
+                }.align(Alignment.CenterHorizontally),
+                value = pathApplications,
+                onValueChange = { pathApplications = it },
+                placeholder = { Text("Папка с заявками.") }
+        )
     }
 }
 
