@@ -16,14 +16,22 @@ data class MapsForParticipant(
 )
 
 fun mapsGenerator(): MapsForParticipant { // <- INPUT
-    TODO()
+     return oldMapsGenerator() //TODO()
 }
 
-fun List<PathSingletons>.doesSuitsPath(real: List<String>): Boolean{
+fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
+    return MapsForParticipant(
+        getMapGroupToNeededPath(),
+        splitsInput(InputTag.ByParticipantNum, "")
+    )
+}
+
+
+fun List<PathSingletons>.doesSuitsPath(real: List<String>): Boolean {
     var curState = true
     var itInReal = 0
     this.forEach {
-        for(i in 1..it.numberOfVisits){
+        for (i in 1..it.numberOfVisits) {
             curState = curState and (real[itInReal] in it.checkpointsOptions)
             itInReal += 1
         }
@@ -55,12 +63,12 @@ class ParticipantsPath(private val participant: Participant) {
         }
 
     val finishTime: LocalTime
-    get() {
-        if (maps.numToActualPath[participant.startNumber] == null){
-            logger.warn { "Не найдена информация о прохождении дистанции участником ${participant.startNumber}" }
-            return LocalTime.of(0, 0, 0, 0)
+        get() {
+            if (maps.numToActualPath[participant.startNumber] == null) {
+                logger.warn { "Не найдена информация о прохождении дистанции участником ${participant.startNumber}" }
+                return LocalTime.of(0, 0, 0, 0)
+            }
+            return maps.numToActualPath[participant.startNumber]!!.list.last().time // null check is done upper
         }
-        return maps.numToActualPath[participant.startNumber]!!.list.last().time // null check is done upper
-    }
 }
 

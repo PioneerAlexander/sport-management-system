@@ -44,12 +44,12 @@ internal class TestOfInput {
             Split("Finish", LocalTime.of(12, 14, 51))
 
         )
-        assertEquals(expected, actual)
+        assertEquals(expected, actual.mapValues { it.value.list })
     }
 
     @Test
     fun testOfSplitsInputBySplitsName() {
-        val actual = splitsInput(InputTag.BySplitsName, "src/test/resources/splitsByName")
+        val actual = splitsInput(BySplitsName, "src/test/resources/splitsByName")
         val expected = mutableMapOf<String, List<Split>>()
         expected["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),
@@ -63,6 +63,6 @@ internal class TestOfInput {
             Split("Finish", LocalTime.of(12, 14, 51))
 
         )
-        assertEquals(expected, actual)
+        assertEquals(expected, actual.mapValues { it.value.list })
     }
 }
