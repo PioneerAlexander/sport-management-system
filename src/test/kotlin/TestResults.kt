@@ -2,7 +2,7 @@ import ru.emkn.kotlin.sms.*
 import ru.emkn.kotlin.sms.InputTag.ByParticipantNum
 import java.io.File
 import kotlin.test.*
-
+/*
 internal class finalResult{
     @Test
     fun testGenerateResults(){
@@ -31,3 +31,5 @@ internal class finalResult{
         assertEquals(1,1)
     }
 }
+
+ */

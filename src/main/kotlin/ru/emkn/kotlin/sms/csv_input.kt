@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms
 
+
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import ru.emkn.kotlin.sms.InputTag.*
 import java.io.File
@@ -8,6 +9,25 @@ import java.time.LocalTime
 
 enum class InputTag {
     ByParticipantNum, BySplitsName
+}
+
+data class Distance(val name: String)
+
+
+fun List<String>?.nullToEmpty(): List<String> {
+    if (this == null) {
+        logger.warn { "input error" }
+        return listOf()
+    }
+    return this
+}
+
+fun getMapGroupToNeededPath(): Map<String, NeededPath> {
+    val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints()
+    return getSportClasses().mapValues { checkpoint ->
+        NeededPath(mapOfDistancesCheckpoints[checkpoint.value.name].nullToEmpty()
+            .map { PathSingletons(1, listOf(it)) })
+    }
 }
 
 fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
@@ -53,14 +73,14 @@ fun MutableMap<String, MutableList<Split>>.sortSplits() {
 }
 
 //tags: "ByParticipantNum" and "BySplitsName"
-fun splitsInput(tag: InputTag, directoryPath: String): Map<String, List<Split>> {
+fun splitsInput(tag: InputTag, directoryPath: String): Map<String, ActualPath> {
     val generator = mutableMapOf<String, MutableList<Split>>()
     val directory = File(directoryPath)
     try {
         check(directory.isDirectory)
         if (directory.listFiles() == null) {
             logger.error { "Протоколы похождения дистанции не найдены" }
-            return generator
+            return mapOf()
         }
         for (file in directory.listFiles()!!) {
             try {
@@ -77,7 +97,8 @@ fun splitsInput(tag: InputTag, directoryPath: String): Map<String, List<Split>> 
         logger.error { "Неверная директория с пор межуточными отметками участников" }
     }
     generator.sortSplits()
-    return generator
+
+    return generator.mapValues { ActualPath(it.value) }
 }
 
 
@@ -130,38 +151,3 @@ fun MutableMap<String, MutableList<Split>>.addSplitsParticipantNameTimeFile(file
         }
     }
 }
-
-
-
-
-
-class Distance(val name: String) {
-    companion object {
-        var mapOfDistancesCheckpoints: Map<String, List<String>> = mapOf()
-    }
-
-    val checkpoints: List<String>
-        get() {
-            if (name in mapOfDistancesCheckpoints.keys) {
-                require(mapOfDistancesCheckpoints[name] != null)
-                return mapOfDistancesCheckpoints[name]!!
-            }
-            return listOf()
-        }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Distance
-
-        if (name != other.name) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return name.hashCode()
-    }
-}
-

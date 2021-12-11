@@ -13,7 +13,7 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
 
     val size: Int
         get() = this.participants.size
-
+/*
     var classesPath: String = "" //когда в соревнование первый раз передается classesPath, меняется map в Participant
         set(value) {
             Participant.mapOfStringDistance = getSportClasses(value)
@@ -31,6 +31,10 @@ class Competition(val name: String, val date: LocalDate, var orgs: List<Organisa
             Distance.mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints(value)
             field = value
         }
+
+ */
+
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
