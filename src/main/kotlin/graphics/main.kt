@@ -34,23 +34,26 @@ enum class State {
     ZERO, DOCS, IMPORT, FINAL
 }
 
-var state = State.ZERO
 
 var pathDirectory = ""
 var pathEvent = ""
 var pathApplications = ""
 
+
+
+
 fun main() = application {
+    var state = remember { mutableStateOf(State.ZERO) }
     Window(onCloseRequest = ::exitApplication,
             title = "ЭСПСС (Электронная система проведения спортивных соревнований)",
             state = rememberWindowState(width = 800.dp, height = 600.dp),
             icon = BitmapPainter(useResource("Bragilevsky2.ico", ::loadImageBitmap)), //своя иконка
             resizable = false)
     {
-        when (state) {
-            State.ZERO -> ZeroState()
-            State.IMPORT -> ImportState()
-            else -> ZeroState()
+        state = when (state.value) {
+            State.ZERO -> ZeroState(state)
+            State.IMPORT -> ImportState(state)
+            else -> ZeroState(state)
         }
     }
 }
@@ -78,9 +81,9 @@ fun TextBox(text: String = "Item", color: String = "grey", fontSize: TextUnit = 
 }
 
 @Composable
-fun ZeroState() {
-    Column(modifier = Modifier.fillMaxWidth().offset(0.dp,100.dp)) {
-        Button(onClick = { state = State.DOCS },
+fun ZeroState(state: MutableState<State>): MutableState<State> {
+    Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp)) {
+        Button(onClick = { state.value = State.DOCS },
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
@@ -93,7 +96,7 @@ fun ZeroState() {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = { state = State.DOCS },
+        Button(onClick = { state.value = State.IMPORT },
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
@@ -106,7 +109,7 @@ fun ZeroState() {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = { state = State.IMPORT },
+        Button(onClick = { state.value = State.ZERO },
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
@@ -130,12 +133,13 @@ fun ZeroState() {
             )
         }
     }
+    return state
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ImportState() {
-    Column(modifier = Modifier.fillMaxWidth()){
+fun ImportState(state: MutableState<State>): MutableState<State> {
+    Column(modifier = Modifier.fillMaxWidth()) {
         TextField(
                 modifier = Modifier.onPreviewKeyEvent {
                     (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
@@ -163,6 +167,7 @@ fun ImportState() {
                 placeholder = { Text("Папка с заявками.") }
         )
     }
+    return state
 }
 
 
