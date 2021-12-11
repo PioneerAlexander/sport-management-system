@@ -66,8 +66,10 @@ class Participant(
         if (this.actualPath.list.isEmpty()) {
             return false
         }
-        return this.checkpoints.list == this.actualPath.list.map { it.name }
+        return this.checkpoints.list.doesSuitsPath(this.actualPath.list.map { it.name })
     }
+
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -8,21 +8,34 @@ data class NeededPath(val list: List<PathSingletons>)
 
 data class Split(val name: String, val time: LocalTime)
 
-data class ActualPath(val list: List<Split>)
+data class ActualPath(val list: List<Split>) // отсортирован по времени
 
 data class MapsForParticipant(
-    val groupToNeededPath: Map<String, NeededPath>,
+    val groupToNeededPath: Map<String, NeededPath>, // group -> distance -> map
     val numToActualPath: Map<String, ActualPath>
 )
 
-fun mapsGenerator(): MapsForParticipant {
+fun mapsGenerator(): MapsForParticipant { // <- INPUT
     TODO()
+}
+
+fun List<PathSingletons>.doesSuitsPath(real: List<String>): Boolean{
+    var curState = true
+    var itInReal = 0
+    this.forEach {
+        for(i in 1..it.numberOfVisits){
+            curState = curState and (real[itInReal] in it.checkpointsOptions)
+            itInReal += 1
+        }
+    }
+    return curState
 }
 
 class ParticipantsPath(private val participant: Participant) {
     companion object {
         val maps = mapsGenerator()
     }
+
     val checkpoints: NeededPath
         get() {
             if (maps.groupToNeededPath[participant.ageGroup] == null) {
@@ -31,6 +44,7 @@ class ParticipantsPath(private val participant: Participant) {
             }
             return maps.groupToNeededPath[participant.ageGroup]!! //null check is done upper
         }
+
     val actualPath: ActualPath
         get() {
             if (maps.numToActualPath[participant.startNumber] == null) {
@@ -39,6 +53,7 @@ class ParticipantsPath(private val participant: Participant) {
             }
             return maps.numToActualPath[participant.startNumber]!! // null check is done upper
         }
+
     val finishTime: LocalTime
     get() {
         if (maps.numToActualPath[participant.startNumber] == null){
