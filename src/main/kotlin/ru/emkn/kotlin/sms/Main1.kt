@@ -1,7 +1,6 @@
 package ru.emkn.kotlin.sms
 
 import mu.KotlinLogging
-import ru.emkn.kotlin.sms.InputTag.*
 
 val logger = KotlinLogging.logger { }
 
@@ -37,17 +36,13 @@ fun main(args: Array<String>) {
                 saveCompetition(args[3], competition) //saves start log in the path with pathName 'comp'
             }
             "finish" -> {
-                checkArgsSize(args, 6)
-                val competition = recreateSavedCompetition(args[5])
-                Input.inputTag = when (args[1]) {
-                    "BySplitsName" -> BySplitsName
-                    else -> ByParticipantNum
-                }
-                Input.classesPath = args[2] //path to file with classes
-                Input.coursesPath = args[3] //path to file with courses
-                Input.splitsPath = args[4] //path to foldr with splits
-                generateResults(competition, args[5])
-                generateTeamResults(competition, args[5])
+                checkArgsSize(args, 5)
+                val competition = recreateSavedCompetition(args[4])
+                Input.classesPath = args[1] //path to file with classes
+                Input.coursesPath = args[2] //path to file with courses
+                Input.splitsPath = args[3] //path to foldr with splits
+                generateResults(competition, args[4])
+                generateTeamResults(competition, args[4])
 
             }
             else -> {

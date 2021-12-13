@@ -1,9 +1,6 @@
 package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.*
-import ru.emkn.kotlin.sms.InputTag.*
-import ru.emkn.kotlin.sms.Organisation.Companion.applicationToOrg
-import java.io.File
 
 
 class Competition(val name: String, val date: LocalDate, val orgs: List<Organisation> = listOf()) {

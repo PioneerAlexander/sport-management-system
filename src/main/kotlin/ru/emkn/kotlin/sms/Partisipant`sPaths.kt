@@ -21,7 +21,7 @@ fun mapsGenerator(): MapsForParticipant { // <- INPUT
 fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
     return MapsForParticipant(
         getMapGroupToNeededPathNew(Input.classesPath, Input.coursesPath),
-        splitsInput(Input.inputTag, Input.splitsPath)
+        splitsInputNew(Input.splitsPath)
     )
 }
 
