@@ -66,6 +66,8 @@ internal class TestOfInput {
         assertEquals(expected, actual.mapValues { it.value.list })
     }
 
+
+
     @Test
     fun getNeededPath() {
         val actual = getMapDistanceNameToNeededPath("src/test/resources/getNeededPathTestData.csv")
@@ -90,6 +92,63 @@ internal class TestOfInput {
         )
         expected["3"] = NeededPath(listOf())
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun newSplitsInputTest1() {
+        val actual = splitsInputNew("src/test/resources/splitsByNameNewFormat")
+        val expected = mutableMapOf<String, List<Split>>()
+        expected["007"] = listOf(
+            Split("1km", LocalTime.of(12, 7, 15)),
+            Split("2km", LocalTime.of(12, 11, 36)),
+            Split("3km", LocalTime.of(12, 13, 29)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+        )
+        expected["243"] = listOf(
+            Split("1km", LocalTime.of(12, 6, 15)),
+            Split("2km", LocalTime.of(12, 10, 36)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+
+        )
+        assertEquals(expected, actual.mapValues { it.value.list })
+    }
+
+    @Test
+    fun newSplitsInputTest2() {
+        val actual = splitsInputNew("src/test/resources/splitsByNumNewFormat")
+        val expected = mutableMapOf<String, List<Split>>()
+        expected["007"] = listOf(
+            Split("1km", LocalTime.of(12, 7, 15)),
+            Split("2km", LocalTime.of(12, 11, 36)),
+            Split("3km", LocalTime.of(12, 13, 29)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+        )
+        expected["243"] = listOf(
+            Split("1km", LocalTime.of(12, 6, 15)),
+            Split("2km", LocalTime.of(12, 10, 36)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+
+        )
+        assertEquals(expected, actual.mapValues { it.value.list })
+    }
+
+    @Test
+    fun newSplitsInputTest3() {
+        val actual = splitsInputNew("src/test/resources/multyTypeSplitsInput")
+        val expected = mutableMapOf<String, List<Split>>()
+        expected["007"] = listOf(
+            Split("1km", LocalTime.of(12, 7, 15)),
+            Split("2km", LocalTime.of(12, 11, 36)),
+            Split("3km", LocalTime.of(12, 13, 29)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+        )
+        expected["243"] = listOf(
+            Split("1km", LocalTime.of(12, 6, 15)),
+            Split("2km", LocalTime.of(12, 10, 36)),
+            Split("Finish", LocalTime.of(12, 14, 51))
+
+        )
+        assertEquals(expected, actual.mapValues { it.value.list })
     }
 
 

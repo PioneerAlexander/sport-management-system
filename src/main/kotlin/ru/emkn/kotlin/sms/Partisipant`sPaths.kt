@@ -20,30 +20,20 @@ fun mapsGenerator(): MapsForParticipant { // <- INPUT
 
 fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
     return MapsForParticipant(
-        getMapGroupToNeededPath(Input.classesPath, Input.coursesPath),
+        getMapGroupToNeededPathNew(Input.classesPath, Input.coursesPath),
         splitsInput(Input.inputTag, Input.splitsPath)
     )
 }
 
 
-fun List<PathSingleton>.doesSuitsPath(real: List<String>): Boolean {
-    var curState = true
-    var itInReal = 0
-    this.forEach {
-        for (i in 1..it.numberOfVisits) {
-            curState = curState and (real[itInReal] in it.checkpointsOptions)
-            itInReal += 1
-        }
-    }
-    return curState
-}
+
 
 class ParticipantsPath(private val participant: Participant) {
     companion object {
         val maps = mapsGenerator()
     }
 
-    val checkpoints: NeededPath
+    private val neededPath: NeededPath
         get() {
             if (maps.groupToNeededPath[participant.ageGroup] == null) {
                 logger.warn { "Не найдена информация о дистанции возрастной группы ${participant.ageGroup}" }
@@ -52,7 +42,7 @@ class ParticipantsPath(private val participant: Participant) {
             return maps.groupToNeededPath[participant.ageGroup]!! //null check is done upper
         }
 
-    val actualPath: ActualPath
+    private val actualPath: ActualPath
         get() {
             if (maps.numToActualPath[participant.startNumber] == null) {
                 logger.warn { "Не найдена информация о прохождении дистанции участником ${participant.startNumber}" }
@@ -69,4 +59,45 @@ class ParticipantsPath(private val participant: Participant) {
             }
             return maps.numToActualPath[participant.startNumber]!!.list.last().time // null check is done upper
         }
+
+    fun isNotCheated(): Boolean {
+        if (!startTimeCheck()) {
+            logger.info { "Участник номе ${participant.startNumber} дисквалифицирован" }
+            return false
+        }
+        if (!containerCheck()) {
+            logger.info { "Участник номе ${participant.startNumber} дисквалифицирован" }
+            return false
+        }
+        return true
+    }
+
+    private fun startTimeCheck(): Boolean {
+        if (actualPath.list.isEmpty()) {
+            return false
+        }
+        return (participant.startTime < actualPath.list[0].time)
+    }
+
+    private fun containerCheck(): Boolean {
+        if (actualPath.list.isEmpty()) {
+            return false
+        }
+        return neededPath.doesSuits(actualPath)
+    }
+
+
+}
+
+fun NeededPath.doesSuits(real: ActualPath): Boolean {
+    var curState = true
+    var itInReal = 0
+    val namesOfRealList = real.list.map { it.name }
+    this.list.forEach { pathSingleton ->
+        val checkSet = namesOfRealList.subList(itInReal, itInReal + pathSingleton.numberOfVisits).toSet()
+        curState = curState and (checkSet.size == pathSingleton.numberOfVisits)
+        curState = curState and(pathSingleton.checkpointsOptions.containsAll(checkSet))
+        itInReal += pathSingleton.numberOfVisits
+    }
+    return curState
 }
