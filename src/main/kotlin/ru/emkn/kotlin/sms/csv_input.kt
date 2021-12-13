@@ -11,12 +11,44 @@ enum class InputTag {
     ByParticipantNum, BySplitsName
 }
 
+
 class Input{
     companion object{
         var inputTag: InputTag = ByParticipantNum
-        var classesPath: String = ""
-        var coursesPath: String = ""
-        var splitsPath: String = ""
+        var classesPath: String = "" // Path to csv file
+        var coursesPath: String = "" // Path to csv file
+        var splitsPath: String = ""  // Path to folder with csv files
+
+        fun check(): Boolean{
+            return scvFileCheck(classesPath) and (scvFileCheck(coursesPath) and splitsPathCheck(splitsPath))
+        }
+        private fun scvFileCheck(path: String): Boolean{
+            if (!File(path).isFile){
+                logger.error { "Неверный путь файла $path" }
+                return false
+            }
+            if (File(path).extension != ".csv"){
+                logger.error { "Неверный формат файла $path" }
+                return false
+            }
+            return true
+        }
+
+        private fun splitsPathCheck(path: String): Boolean{
+            if (!File(path).isDirectory){
+                logger.error { "Неверный путь к директории с промежуточными результатами" }
+                return false
+            }
+            File(path).list()!!.toList().forEach {
+                if (it == null){
+                    logger.warn { "Неверный файл промежуточного результата" }
+                }
+                if (!scvFileCheck("$path/$it")){
+                    return false
+                }
+            }
+            return true
+        }
     }
 }
 
@@ -35,7 +67,7 @@ fun getMapGroupToNeededPath(classesPath: String, coursesPath:String): Map<String
     val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints(coursesPath)
     return getSportClasses(classesPath).mapValues { checkpoint ->
         NeededPath(mapOfDistancesCheckpoints[checkpoint.value.name].nullToEmpty()
-            .map { PathSingletons(1, listOf(it)) })
+            .map { PathSingleton(1, listOf(it)) })
     }
 }
 
@@ -72,6 +104,54 @@ fun getMapOfDistancesCheckpoints(filePath: String = "sample-data/courses.csv"): 
         logger.error { "Неверные данные в $filePath" }
     }
     return generatorOfMap
+}
+
+/*
+,NAME, - один чекпоит который надо посетить после предыдущего блока -> PathSingleton(1, [NAME])
+,!NAME1 NAME2 NAME3, - нужно посетить один чекпоит из перечисленных на выбор -> PathSingleton(1, [NAME1, NAME2, NAME3])
+,~NUMBER NAME1 NAME2 NAME3, - нужно посетить ровно NUMBER различных чекпоитов из перечисленных на выбор
+-> PathSingleton(1, [NAME1, NAME2, NAME3])
+ */
+
+fun pathSingletonFromString(string: String): PathSingleton{
+    return if (string[0] == '!'){
+        PathSingleton(1, string.substring(1, string.lastIndex+1).split(" "))
+    }
+    else if (string[0] == '~'){
+        val withoutMarkerSign = string.substring(1, string.lastIndex+1).split(" ")
+        PathSingleton(withoutMarkerSign[0].toInt(), withoutMarkerSign.subList(1, withoutMarkerSign.lastIndex+1))
+    }
+    else{
+        PathSingleton(1, listOf(string))
+    }
+}
+
+fun pathLangToNeededPath(list: List<String>): NeededPath{
+    val neededPathGenerator = mutableListOf<PathSingleton>()
+    list.forEach {
+        neededPathGenerator.add(pathSingletonFromString(it))
+    }
+    return NeededPath(neededPathGenerator)
+}
+
+fun getMapDistanceNameToNeededPath(filePath: String = "sample-data/courses.csv"): Map<String, NeededPath> {
+    val mapGenerator = mutableMapOf<String, NeededPath>()
+    try {
+        csvReader().open(filePath) {
+            readNext()
+            readAllAsSequence().forEach { list ->
+                try {
+                    mapGenerator[list[0]] = pathLangToNeededPath(list.subList(1, list.lastIndex + 1).filter { it != "" })
+                }
+                catch (e: Exception){ logger.error { "Неверный формат дистанции группы ${list[0]}" }}
+
+
+            }
+        }
+    } catch (ex: Exception) {
+        logger.error { "Неверные данные в $filePath ($ex)" }
+    }
+    return mapGenerator
 }
 
 

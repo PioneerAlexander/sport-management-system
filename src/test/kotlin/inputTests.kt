@@ -65,4 +65,32 @@ internal class TestOfInput {
         )
         assertEquals(expected, actual.mapValues { it.value.list })
     }
+
+    @Test
+    fun getNeededPath() {
+        val actual = getMapDistanceNameToNeededPath("src/test/resources/getNeededPathTestData.csv")
+        val expected = mutableMapOf<String, NeededPath>()
+        expected["1"] = NeededPath(
+            listOf(
+                PathSingleton(1, listOf("11")),
+                PathSingleton(1, listOf("12")),
+                PathSingleton(1, listOf("13")),
+                PathSingleton(1, listOf("14")),
+                PathSingleton(1, listOf("15")),
+                PathSingleton(1, listOf("16")),
+                )
+        )
+        expected["2"] = NeededPath(
+            listOf(
+                PathSingleton(1, listOf("21")),
+                PathSingleton(1, listOf("w22", "w23")),
+                PathSingleton(2, listOf("24t", "25t", "26t", "27t", "28t")),
+                PathSingleton(1, listOf("29")),
+                )
+        )
+        expected["3"] = NeededPath(listOf())
+        assertEquals(expected, actual)
+    }
+
+
 }

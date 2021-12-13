@@ -1,9 +1,9 @@
 package ru.emkn.kotlin.sms
 import java.time.LocalTime
 
-data class PathSingletons(val numberOfVisits: Int, val checkpointsOptions: List<String>)
+data class PathSingleton(val numberOfVisits: Int, val checkpointsOptions: List<String>)
 
-data class NeededPath(val list: List<PathSingletons>)
+data class NeededPath(val list: List<PathSingleton>)
 
 data class Split(val name: String, val time: LocalTime)
 
@@ -26,7 +26,7 @@ fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
 }
 
 
-fun List<PathSingletons>.doesSuitsPath(real: List<String>): Boolean {
+fun List<PathSingleton>.doesSuitsPath(real: List<String>): Boolean {
     var curState = true
     var itInReal = 0
     this.forEach {
