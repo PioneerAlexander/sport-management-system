@@ -63,11 +63,27 @@ fun List<String>?.nullToEmpty(): List<String> {
     return this
 }
 
-fun getMapGroupToNeededPath(classesPath: String, coursesPath:String): Map<String, NeededPath> {
+fun NeededPath?.nullToEmpty(): NeededPath {
+    if (this == null) {
+        logger.warn { "input error" }
+        return NeededPath(listOf())
+    }
+    return this
+}
+
+
+fun getMapGroupToNeededPathOld(classesPath: String, coursesPath:String): Map<String, NeededPath> {
     val mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints(coursesPath)
     return getSportClasses(classesPath).mapValues { checkpoint ->
         NeededPath(mapOfDistancesCheckpoints[checkpoint.value.name].nullToEmpty()
             .map { PathSingleton(1, listOf(it)) })
+    }
+}
+
+fun getMapGroupToNeededPathNew(classesPath: String, coursesPath:String): Map<String, NeededPath> {
+    val mapOfDistancesCheckpoints = getMapDistanceNameToNeededPath(coursesPath)
+    return getSportClasses(classesPath).mapValues { checkpoint ->
+        mapOfDistancesCheckpoints[checkpoint.value.name].nullToEmpty()
     }
 }
 
