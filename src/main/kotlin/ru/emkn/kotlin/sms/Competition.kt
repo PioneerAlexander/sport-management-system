@@ -1,38 +1,15 @@
 package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.*
-import ru.emkn.kotlin.sms.InputTag.*
-import ru.emkn.kotlin.sms.Organisation.Companion.applicationToOrg
-import java.io.File
 
 
-class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
-    var inputTag = ByParticipantNum
+class Competition(val name: String, val date: LocalDate, val orgs: List<Organisation> = listOf()) {
+
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 
     val size: Int
         get() = this.participants.size
-/*
-    var classesPath: String = "" //когда в соревнование первый раз передается classesPath, меняется map в Participant
-        set(value) {
-            //Participant.mapOfStringDistance = getSportClasses(value)
-            field = value
-        }
-
-    var splitsPath: String = "" //когда в соревнование первый раз передается splitsPath, меняется map в Participant
-        set(value) {
-            //Participant.mapFromNumberToSplits = splitsInput(inputTag, value)
-            field = value
-        }
-
-    var coursesPath: String = "" //когда в соревнование первый раз передается splitsPath, меняется map в Distance
-        set(value) {
-            Distance.mapOfDistancesCheckpoints = getMapOfDistancesCheckpoints(value)
-            field = value
-        }
-
- */
 
 
 

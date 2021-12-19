@@ -146,10 +146,9 @@ fun TextBox(text: String = "Item", color: String = "grey", fontSize: TextUnit = 
 @Composable
 fun ZeroState(state: MutableState<State>): State {
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp)) {
-        Button(
-            onClick = { state.value = State.DOCS },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        Button(onClick = { state.value = State.DOCS },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(
@@ -160,10 +159,9 @@ fun ZeroState(state: MutableState<State>): State {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(
-            onClick = { state.value = State.IMPORT },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        Button(onClick = { state.value = State.IMPORT },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(
@@ -174,10 +172,9 @@ fun ZeroState(state: MutableState<State>): State {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(
-            onClick = { state.value = State.ZERO },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp).height(50.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        Button(onClick = { state.value = State.ZERO },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(

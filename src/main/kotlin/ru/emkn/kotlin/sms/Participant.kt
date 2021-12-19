@@ -37,37 +37,8 @@ class Participant(
     val finishTime
         get() = ParticipantsPath(this).finishTime
 
-    val checkpoints: NeededPath
-        get() = ParticipantsPath(this).checkpoints
-
-    val actualPath: ActualPath
-        get() = ParticipantsPath(this).actualPath
-
-    fun isNotCheated(): Boolean {
-        if (!startTimeCheck()) {
-            logger.info { "Участник номе $startNumber дисквалифицирован" }
-            return false
-        }
-        if (!containerCheck()) {
-            logger.info { "Участник номе $startNumber дисквалифицирован" }
-            return false
-        }
-        return true
-    }
-
-    private fun startTimeCheck(): Boolean {
-        if (this.actualPath.list.isEmpty()) {
-            return false
-        }
-        return (startTime < this.actualPath.list[0].time)
-    }
-
-    private fun containerCheck(): Boolean {
-        if (this.actualPath.list.isEmpty()) {
-            return false
-        }
-        return this.checkpoints.list.doesSuitsPath(this.actualPath.list.map { it.name })
-    }
+    val isNotCheated: Boolean
+    get() = ParticipantsPath(this).isNotCheated()
 
 
 
