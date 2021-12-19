@@ -58,23 +58,7 @@ object Paths {
 }
 
 
-val composeTable = mutableListOf(
-    mutableListOf(
-        mutableStateOf("a"),
-        mutableStateOf("a"),
-        mutableStateOf("a"),
-        mutableStateOf("a")
-    ),
 
-    mutableListOf(
-        mutableStateOf("a"),
-        mutableStateOf("a"),
-        mutableStateOf("a"),
-        mutableStateOf("a")
-    )
-
-)
-val a = MutableList(3) { mutableStateOf(it.toString()) }
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -82,15 +66,30 @@ fun main() = application {
     val windowState = remember { mutableStateOf(State.ZERO) }
     val tabState = remember { mutableStateOf(0) }
 
-    //val a = mutableStateOf(mutableListOf(mutableListOf<String>("a","b","c","d"), mutableListOf("1","2","3","4")))
+    val composeTable = mutableListOf(
+        mutableListOf(
+            mutableStateOf("a"),
+            mutableStateOf("a"),
+            mutableStateOf("a"),
+            mutableStateOf("a")
+        ),
 
+        mutableListOf(
+            mutableStateOf("a"),
+            mutableStateOf("a"),
+            mutableStateOf("a"),
+            mutableStateOf("a")
+        )
+    )
+
+    val table = Table(composeTable)
 
     Window(
         onCloseRequest = ::exitApplication,
         title = "ЭСПСС (Электронная система проведения спортивных соревнований)",
         state = rememberWindowState(width = 800.dp, height = 600.dp),
         icon = BitmapPainter(useResource("Bragilevsky2.ico", ::loadImageBitmap)), //своя иконка
-        resizable = false,
+        resizable = true,
     )
     {
 
@@ -110,7 +109,7 @@ fun main() = application {
 
         //NewFileButton(FileDialog(ComposeWindow()))
 
-        show()
+        table.show(mutable=true)
 
 
 //        windowState.value = when (windowState.value) {
@@ -146,9 +145,10 @@ fun TextBox(text: String = "Item", color: String = "grey", fontSize: TextUnit = 
 @Composable
 fun ZeroState(state: MutableState<State>): State {
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp)) {
-        Button(onClick = { state.value = State.DOCS },
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        Button(
+            onClick = { state.value = State.DOCS },
+            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(
@@ -159,9 +159,10 @@ fun ZeroState(state: MutableState<State>): State {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = { state.value = State.IMPORT },
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        Button(
+            onClick = { state.value = State.IMPORT },
+            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(
@@ -172,9 +173,10 @@ fun ZeroState(state: MutableState<State>): State {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        Button(onClick = { state.value = State.ZERO },
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        Button(
+            onClick = { state.value = State.ZERO },
+            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(
@@ -231,7 +233,9 @@ fun ZeroState(state: MutableState<State>): State {
 //        )
 //    }
 //    return state.value
-//}
+//
+// }
+
 
 
 //NewFileButton(FileDialog(ComposeWindow()))
@@ -251,55 +255,4 @@ fun NewFileButton(fileDialog: FileDialog) {
     ) {
         Text(text)
     }
-
-
 }
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun show() {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-        for ((index, row) in composeTable.withIndex()) {
-
-            val readOnly = index == 0
-            Row(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                horizontalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                for ((rowIndex, field) in row.withIndex()) {
-                    TextField(
-                        modifier = Modifier.onPreviewKeyEvent {
-                            (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
-                        }.width(150.dp),
-                        value = field.value,
-                        onValueChange = {
-                            composeTable[index][rowIndex].value =
-                                it;println(composeTable[index][rowIndex].value)
-                        },
-                        placeholder = { Text("Значение.") },
-                        readOnly = readOnly
-                    )
-                }
-                AddButton(index)
-                if (!readOnly) DeleteButton(index)
-            }
-
-        }
-    }
-}
-
-@Composable
-private fun AddButton(index: Int) {
-    IconButton(onClick = {
-        composeTable.add(index + 1, MutableList(composeTable[0].size) { mutableStateOf("") })
-    }) { Icon(Icons.Default.Add, "") }
-
-}
-
-@Composable
-private fun DeleteButton(index: Int) {
-    IconButton(onClick = { composeTable.removeAt(index) }) { Icon(Icons.Default.Delete, "") }
-}
-
-
-
