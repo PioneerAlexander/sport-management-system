@@ -18,8 +18,10 @@ dependencies {
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0") //for JVM platform
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.1")
     implementation(
-        "io.github.microutils:kotlin-logging-jvm:2.0.11")
-    runtimeOnly("org.slf4j:slf4j-simple:1.7.29")
+        "io.github.microutils:kotlin-logging-jvm:2.1.16"
+    )
+    runtimeOnly("org.slf4j:slf4j-simple:1.7.32")
+
 
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
     implementation ("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
@@ -32,3 +34,4 @@ compose.desktop {
         mainClass = "MainKt"
     }
 }
+
