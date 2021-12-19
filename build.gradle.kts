@@ -1,10 +1,10 @@
 import org.jetbrains.compose.compose
 
-version = "1.6"
+version = "1.0"
 
 plugins {
-    kotlin("jvm") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0"
+    kotlin("jvm") version "1.6.10"
+    id("org.jetbrains.compose") version "1.0.1-rc2"
 }
 
 repositories {
@@ -23,10 +23,10 @@ dependencies {
     runtimeOnly("org.slf4j:slf4j-simple:1.7.32")
 
 
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
-    implementation ("org.jetbrains.kotlin:kotlin-reflect:1.5.31")
-    testImplementation ("org.jetbrains.kotlin:kotlin-test:1.5.31")
-    testImplementation ("org.jetbrains.kotlin:kotlin-test-junit:1.5.31")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
+    implementation ("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
+    testImplementation ("org.jetbrains.kotlin:kotlin-test:1.6.10")
+    testImplementation ("org.jetbrains.kotlin:kotlin-test-junit:1.6.10")
 }
 
 compose.desktop {
