@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import graphics.Files.loadingSaved
 import java.awt.FileDialog
 import java.io.File
 
@@ -51,14 +53,13 @@ enum class State {
 }
 
 
-object Paths {
-    var pathDirectory = mutableStateOf("")
-    var pathEvent: String = ""
-    var pathApplications: String = ""
+object Files {
+    var directory = mutableStateOf("")
+    var event = mutableStateOf(listOf<File>())
+    var applications = mutableStateOf(listOf<File>())
+    var saved = mutableStateOf(listOf<File>())
+    var loadingSaved = false
 }
-
-
-
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -66,23 +67,6 @@ fun main() = application {
     val windowState = remember { mutableStateOf(State.ZERO) }
     val tabState = remember { mutableStateOf(0) }
 
-    val composeTable = mutableListOf(
-        mutableListOf(
-            mutableStateOf("a"),
-            mutableStateOf("a"),
-            mutableStateOf("a"),
-            mutableStateOf("a")
-        ),
-
-        mutableListOf(
-            mutableStateOf("a"),
-            mutableStateOf("a"),
-            mutableStateOf("a"),
-            mutableStateOf("a")
-        )
-    )
-
-    val table = Table(composeTable)
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -93,30 +77,12 @@ fun main() = application {
     )
     {
 
-//        val tabs =
-//            listOf(Icons.Rounded.ArrowBack,Icons.Default.Home,Icons.Rounded.List, Icons.Filled.Person, Icons.Rounded.AccountBox,Icons.Rounded.AddCircle, Icons.Rounded.FavoriteBorder)
-//
-//        Column {
-//            TabRow(selectedTabIndex = tabState.value, divider = {}, modifier = Modifier.height(50.dp)) {
-//                tabs.withIndex().forEach() { (index, icon) ->
-//                    Tab(
-//                        icon = {Icon(icon, "")},
-//                        selected = tabState.value == index,
-//                        onClick = { tabState.value = index })
-//                }
-//            }
-//        }
 
-        //NewFileButton(FileDialog(ComposeWindow()))
-
-        table.show(mutable=true)
-
-
-//        windowState.value = when (windowState.value) {
-//            State.ZERO -> ZeroState(windowState)
-//            //State.IMPORT -> ImportState(windowState)
-//            else -> ZeroState(windowState)
-//        }
+        windowState.value = when (windowState.value) {
+            State.ZERO -> ZeroState(windowState)
+            State.IMPORT -> ImportState(windowState)
+            else -> ZeroState(windowState)
+        }
     }
 }
 
@@ -144,7 +110,7 @@ fun TextBox(text: String = "Item", color: String = "grey", fontSize: TextUnit = 
 
 @Composable
 fun ZeroState(state: MutableState<State>): State {
-    Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
         Button(
             onClick = { state.value = State.DOCS },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
@@ -158,7 +124,6 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
         Button(
             onClick = { state.value = State.IMPORT },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
@@ -172,7 +137,6 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        Spacer(modifier = Modifier.height(10.dp))
         Button(
             onClick = { state.value = State.ZERO },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
@@ -201,58 +165,55 @@ fun ZeroState(state: MutableState<State>): State {
     return state.value
 }
 
-//@OptIn(ExperimentalComposeUiApi::class)
-//@Composable
-//fun ImportState(state: MutableState<State>): State {
-//    Column(modifier = Modifier.fillMaxWidth().offset(0.dp,100.dp)) {
-//        TextField(
-//                modifier = Modifier.onPreviewKeyEvent {
-//                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
-//                }.align(Alignment.CenterHorizontally),
-//                value = Paths.pathDirectory,
-//                onValueChange = { Paths.pathDirectory = it },
-//                placeholder = { Text("Папка для сохранения.") }
-//        )
-//        Spacer(modifier = Modifier.height(5.dp))
-//        TextField(
-//                modifier = Modifier.onPreviewKeyEvent {
-//                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
-//                }.align(Alignment.CenterHorizontally),
-//                value = Paths.pathEvent,
-//                onValueChange = { Paths.pathEvent = it },
-//                placeholder = { Text("Файл соревнования.") }
-//        )
-//        Spacer(modifier = Modifier.height(5.dp))
-//        TextField(
-//                modifier = Modifier.onPreviewKeyEvent {
-//                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
-//                }.align(Alignment.CenterHorizontally),
-//                value = Paths.pathApplications,
-//                onValueChange = { Paths.pathApplications = it },
-//                placeholder = { Text("Папка с заявками.") }
-//        )
-//    }
-//    return state.value
-//
-// }
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun ImportState(state: MutableState<State>): State {
+    Button(onClick = {state.value = State.ZERO}){Text(text = "Назад", color = Color.White)}
+    Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
+        TextField(
+            modifier = Modifier.onPreviewKeyEvent {
+                (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
+            }.align(Alignment.CenterHorizontally),
+            value = Files.directory.value,
+            onValueChange = { Files.directory.value = it },
+            placeholder = { Text("Имя папки для сохранения.") }
+        )
+        Files.event.value =
+            NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp))
+        Files.applications.value =
+            NewFileButton("Все файлы заявок", Modifier.align(Alignment.CenterHorizontally).width(300.dp))
+
+        Files.saved.value =
+            NewFileButton("Загрузить сохраненное", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
+                state.value = State.ZERO
+            }
+    }
+    return state.value
+
+}
 
 
 //NewFileButton(FileDialog(ComposeWindow()))
 @Composable
-fun NewFileButton(fileDialog: FileDialog) {
-    val text: String = "Загрузить файлы"
-    val files = mutableListOf<File>()
+fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}): List<File> {
+    val fileDialog = FileDialog(ComposeWindow())
 
+    val files = mutableListOf<File>()
     Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128)),
         onClick = {
             fileDialog.isMultipleMode = true
             fileDialog.isVisible = true
             files += fileDialog.files
-            //count.value = files.size
+            onClick()
         }
     ) {
-        Text(text)
+        Text(text, color = Color.White)
     }
+    return files
 }
+
+
+
