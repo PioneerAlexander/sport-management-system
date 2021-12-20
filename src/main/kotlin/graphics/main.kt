@@ -5,11 +5,14 @@ import androidx.compose.foundation.ContextMenuDataProvider
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
@@ -44,6 +47,8 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import graphics.Files.loadingSaved
+import ru.emkn.kotlin.sms.recreateSavedCompetition
+import ru.emkn.kotlin.sms.startOnCl
 import java.awt.FileDialog
 import java.io.File
 
@@ -84,7 +89,7 @@ fun main() = application {
         resizable = true,
     )
     {
-        //Table(mutableListOf(mutableListOf(mutableStateOf("")))).show()
+        //Table(mutableListOf(mutableListOf(mutableStateOf("ytyrd")))).show()
         windowState.value = when (windowState.value) {
             State.ZERO -> ZeroState(windowState)
             State.IMPORT -> ImportState(windowState)
@@ -145,7 +150,7 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
+        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value && Files.gotDirectory.value)) {
             Button(
                 onClick = {
                     state.value = State.START_PROTOCOLS
@@ -153,6 +158,11 @@ fun ZeroState(state: MutableState<State>): State {
                      * Если loadingSaved нужно просто показать, иначе сгенерировать и показать,
                      * редактировать нельзя (mutable = false)
                      */
+                    if (Files.loadingSaved.value) {
+                        recreateSavedCompetition(Files.saved.value.first())
+                    } else {
+                        startOnCl(Files.event.value.first(), Files.applications.value, Files.directory.value)
+                    }
                     //TODO("Генерация стартовых протоколов")
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
@@ -286,7 +296,7 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
             when (type) {
                 InputFilesType.EVENT -> Files.event.value = files
                 InputFilesType.APPLICATIONS -> Files.applications.value = files
-                else -> throw Exception("bitch")
+                else -> Files.saved.value = files
             }
             onClick()
         }
@@ -295,6 +305,28 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
     }
 }
 
+
+//@OptIn(ExperimentalComposeUiApi::class)
+//@Composable
+//fun StartProtocols(listedStartProtocols: List<MutableList<MutableList<MutableState<String>>>>) {
+//    var expanded by remember { mutableStateOf(false) }
+//    DropdownMenu(
+//        expanded = expanded,
+//        onDismissRequest = { expanded = false },
+//    ) {
+//        for (startProtocol in listedStartProtocols) {
+//            DropdownMenuItem(
+//                modifier = Modifier.clickable { expanded = true },
+//                content = @Composable {
+//
+//                    Table(startProtocol).show()
+//
+//                }
+//            )
+//        }
+//    }
+//
+//}
 
 enum class InputFilesType {
     EVENT, APPLICATIONS, OTHER
