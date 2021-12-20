@@ -73,6 +73,12 @@ object Files {
     var gotApplications = mutableStateOf(false)
     var saved = mutableStateOf(listOf<File>())
     var loadingSaved = mutableStateOf(false)
+    var splits = mutableStateOf(listOf<File>())
+    var gotSplits = mutableStateOf(false)
+    var courses = mutableStateOf(listOf<File>())
+    var gotCourses = mutableStateOf(false)
+    var classes = mutableStateOf(listOf<File>())
+    var gotClasses = mutableStateOf(false)
 }
 
 
@@ -92,6 +98,7 @@ fun main() = application {
             State.ZERO -> ZeroState(windowState)
             State.IMPORT -> ImportState(windowState)
             State.LISTS -> ListsState(windowState)
+            State.CHECKPOINTS -> CheckpointsState(windowState)
             else -> ZeroState(windowState)
         }
     }
@@ -172,7 +179,6 @@ fun ZeroState(state: MutableState<State>): State {
         Button(
             onClick = {
                 state.value = State.CHECKPOINTS
-                TODO("implement 2 types of input")
             },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
@@ -266,7 +272,45 @@ fun ImportState(state: MutableState<State>): State {
                 Files.loadingSaved.value = true
                 state.value = State.ZERO
             },
-            type = InputFilesType.OTHER
+            type = InputFilesType.SAVED
+        )
+    }
+    return state.value
+
+}
+
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun CheckpointsState(state: MutableState<State>): State {
+    Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
+    Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+
+        NewFileButton("CLASSES",
+            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
+            {
+                Files.gotClasses.value = true
+            },
+            type = InputFilesType.CLASSES
+        )
+
+        NewFileButton(
+            "COURSES",
+            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
+            {
+                Files.gotCourses.value = true
+            },
+            type = InputFilesType.COURSES
+        )
+
+
+        NewFileButton(
+            "SPLITS",
+            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
+            {
+                Files.gotSplits.value = true
+            },
+            type = InputFilesType.SPLITS
         )
     }
     return state.value
@@ -290,7 +334,10 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
             when (type) {
                 InputFilesType.EVENT -> Files.event.value = files
                 InputFilesType.APPLICATIONS -> Files.applications.value = files
-                else -> throw Exception("bitch")
+                InputFilesType.SAVED -> Files.saved.value = files
+                InputFilesType.COURSES -> Files.courses.value = files
+                InputFilesType.CLASSES -> Files.classes.value = files
+                InputFilesType.SPLITS -> Files.splits.value = files
             }
             onClick()
         }
@@ -301,5 +348,5 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
 
 
 enum class InputFilesType {
-    EVENT, APPLICATIONS, OTHER
+    EVENT, APPLICATIONS, SAVED, COURSES, CLASSES, SPLITS, OTHER
 }
