@@ -36,7 +36,6 @@ class Table(val composeTable: MutableList<MutableList<MutableState<String>>>) {
     fun show(mutable: Boolean) {
         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(5.dp)) {
             repeat(composeTableSize.value) { index ->
-
                 val readOnly = if (mutable) index == 0 else true
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally),

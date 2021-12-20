@@ -22,7 +22,7 @@ dependencies {
     )
     runtimeOnly("org.slf4j:slf4j-simple:1.7.32")
 
-
+   // implementation("androidx.compose.material:material-icons-extended:$compose_version")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
     implementation ("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     testImplementation ("org.jetbrains.kotlin:kotlin-test:1.6.10")
