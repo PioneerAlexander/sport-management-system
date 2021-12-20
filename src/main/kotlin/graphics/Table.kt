@@ -45,7 +45,7 @@ class Table(val composeTable: MutableList<MutableList<MutableState<String>>>) {
     val composeTableSize = mutableStateOf(composeTable.size)
 
     @Composable
-    fun show(mutable: Boolean) {
+    fun show(mutable: Boolean = true) {
         Box(
             modifier = Modifier.fillMaxSize()
                 .background(color = Color(251, 206, 177))
@@ -59,9 +59,10 @@ class Table(val composeTable: MutableList<MutableList<MutableState<String>>>) {
                     .fillMaxSize()
                     .verticalScroll(stateVertical)
                     .padding(end = 12.dp, bottom = 12.dp)
-                    .horizontalScroll(stateHorizontal)
+                    .horizontalScroll(stateHorizontal).align(Alignment.Center)
             ) {
             Column(
+                modifier = Modifier.align(Alignment.TopCenter),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 repeat(composeTableSize.value) { index ->

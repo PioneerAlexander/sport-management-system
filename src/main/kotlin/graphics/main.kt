@@ -52,6 +52,14 @@ enum class State {
     ZERO, DOCS, IMPORT, FINAL, START_PROTOCOLS, CHECKPOINTS
 }
 
+object Tables {
+    var startProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
+    var finishProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
+    var splitsType1 = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
+    var spitsType2 = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
+    var groupTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
+
+}
 
 object Files {
     var directory = mutableStateOf("")
@@ -68,9 +76,6 @@ object Files {
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
     val windowState = remember { mutableStateOf(State.ZERO) }
-    val tabState = remember { mutableStateOf(0) }
-
-
     Window(
         onCloseRequest = ::exitApplication,
         title = "ЭСПСС (Электронная система проведения спортивных соревнований)",
@@ -79,8 +84,7 @@ fun main() = application {
         resizable = true,
     )
     {
-
-
+        //Table(mutableListOf(mutableListOf(mutableStateOf("")))).show()
         windowState.value = when (windowState.value) {
             State.ZERO -> ZeroState(windowState)
             State.IMPORT -> ImportState(windowState)
@@ -140,7 +144,7 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value && Files.gotDirectory.value)) {
+        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
             Button(
                 onClick = {
                     state.value = State.START_PROTOCOLS
@@ -148,7 +152,7 @@ fun ZeroState(state: MutableState<State>): State {
                      * Если loadingSaved нужно просто показать, иначе сгенерировать и показать,
                      * редактировать нельзя (mutable = false)
                      */
-                    TODO("Генерация стартовых протоколов")
+                    //TODO("Генерация стартовых протоколов")
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
@@ -221,20 +225,28 @@ fun ImportState(state: MutableState<State>): State {
             onValueChange = { Files.directory.value = it },
             placeholder = { Text("Имя папки для сохранения.") }
         )
-        Files.event.value =
-            NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
-                Files.gotEvent.value = true
-            }
-        Files.applications.value =
-            NewFileButton("Все файлы заявок", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
+        NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp), {
+            Files.gotEvent.value = true
+        }, type = InputFilesType.EVENT)
+        NewFileButton(
+            "Все файлы заявок",
+            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
+            {
                 Files.gotApplications.value = true
-            }
+            },
+            type = InputFilesType.APPLICATIONS
+        )
 
-        Files.saved.value =
-            NewFileButton("Загрузить сохраненное", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
+
+        NewFileButton(
+            "Загрузить сохраненное",
+            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
+            {
                 Files.loadingSaved.value = true
                 state.value = State.ZERO
-            }
+            },
+            type = InputFilesType.OTHER
+        )
     }
     return state.value
 
@@ -243,7 +255,7 @@ fun ImportState(state: MutableState<State>): State {
 
 //NewFileButton(FileDialog(ComposeWindow()))
 @Composable
-fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}): List<File> {
+fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, type: InputFilesType) {
     val fileDialog = FileDialog(ComposeWindow())
 
     val files = mutableListOf<File>()
@@ -254,12 +266,18 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}): L
             fileDialog.isMultipleMode = true
             fileDialog.isVisible = true
             files += fileDialog.files
+            when (type) {
+                InputFilesType.EVENT -> Files.event.value = files
+                InputFilesType.APPLICATIONS -> Files.applications.value = files
+            }
             onClick()
         }
     ) {
         Text(text, color = Color.White)
     }
-    return files
 }
 
 
+enum class InputFilesType {
+    EVENT, APPLICATIONS, OTHER
+}
