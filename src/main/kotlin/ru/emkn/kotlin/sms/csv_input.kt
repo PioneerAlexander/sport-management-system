@@ -4,15 +4,16 @@ package ru.emkn.kotlin.sms
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import java.io.File
 import java.lang.IllegalArgumentException
+import java.nio.file.Files
 import java.time.LocalTime
 
 
 class Input {
     companion object {
-        var classesPath: String = "" // Path to csv file
-        var coursesPath: String = "" // Path to csv file
-        var splitsPath: String = ""  // Path to folder with csv files
-
+        var classesFile: File = File("") // Path to csv file
+        var coursesFile: File = File("")
+        var splitsFiles: List<File> = listOf()
+        /*
         fun check(): Boolean {
             return scvFileCheck(classesPath) and (scvFileCheck(coursesPath) and splitsPathCheck(splitsPath))
         }
@@ -34,6 +35,7 @@ class Input {
                 logger.error { "Неверный путь к директории с промежуточными результатами" }
                 return false
             }
+            // File(path) существует
             File(path).list()!!.toList().forEach {
                 if (it == null) {
                     logger.warn { "Неверный файл промежуточного результата" }
@@ -44,6 +46,8 @@ class Input {
             }
             return true
         }
+
+         */
     }
 }
 
@@ -58,18 +62,18 @@ fun NeededPath?.nullToEmpty(): NeededPath {
 }
 
 
-fun getMapGroupToNeededPathNew(classesPath: String, coursesPath: String): Map<String, NeededPath> {
-    val mapOfDistancesCheckpoints = getMapDistanceNameToNeededPath(coursesPath)
-    return getSportClasses(classesPath).mapValues { checkpoint ->
+fun getMapGroupToNeededPathNew(classesFile: File, coursesFile: File): Map<String, NeededPath> {
+    val mapOfDistancesCheckpoints = getMapDistanceNameToNeededPath(coursesFile)
+    return getSportClasses(classesFile).mapValues { checkpoint ->
         mapOfDistancesCheckpoints[checkpoint.value.name].nullToEmpty()
     }
 }
 
-fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, Distance> {
+fun getSportClasses(file: File): Map<String, Distance> {
     val generator = mutableMapOf<String, Distance>()
     try {
-        check(File(filePath).isFile) { "No courses file" }
-        csvReader().open(filePath) {
+        check(file.isFile) { "No courses file" }
+        csvReader().open(file) {
             readNext()
             readAllAsSequence().forEach {
                 check(it.size == 2) { "Wrong classes file" }
@@ -77,7 +81,7 @@ fun getSportClasses(filePath: String = "sample-data/classes.csv"): Map<String, D
             }
         }
     } catch (ex: Exception) {
-        logger.error { "Неверные данные в $filePath" }
+        logger.error { "Неверные данные в ${file.name}" }
     }
     return generator
 }
@@ -109,10 +113,10 @@ fun pathLangToNeededPath(list: List<String>): NeededPath {
     return NeededPath(neededPathGenerator)
 }
 
-fun getMapDistanceNameToNeededPath(filePath: String = "sample-data/courses.csv"): Map<String, NeededPath> {
+fun getMapDistanceNameToNeededPath(file: File): Map<String, NeededPath> {
     val mapGenerator = mutableMapOf<String, NeededPath>()
     try {
-        csvReader().open(filePath) {
+        csvReader().open(file) {
             readNext()
             readAllAsSequence().forEach { list ->
                 try {
@@ -121,12 +125,10 @@ fun getMapDistanceNameToNeededPath(filePath: String = "sample-data/courses.csv")
                 } catch (e: Exception) {
                     logger.error { "Неверный формат дистанции группы ${list[0]}" }
                 }
-
-
             }
         }
     } catch (ex: Exception) {
-        logger.error { "Неверные данные в $filePath ($ex)" }
+        logger.error { "Неверные данные в ${file.name} ($ex)" }
     }
     return mapGenerator
 }
@@ -139,12 +141,10 @@ fun MutableMap<String, MutableList<Split>>.sortSplits() {
 }
 
 
-fun splitsInputNew(directoryPath: String): Map<String, ActualPath> {
+fun splitsInputNew(files: List<File>): Map<String, ActualPath> {
     val generator = mutableMapOf<String, MutableList<Split>>()
-    val directory = File(directoryPath)
     try {
-        check(directory.isDirectory)
-        for (file in directory.listFiles()!!) {
+        for (file in files) {
             try {
                 generator.addSplitsData(file)
             } catch (e: Exception) {

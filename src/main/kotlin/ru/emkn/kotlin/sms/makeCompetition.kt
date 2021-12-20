@@ -4,23 +4,18 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import kotlinx.datetime.LocalDate
 import java.io.File
 
-fun addOrganisations(pathApplications: String): List<Organisation> {
-    check(File(pathApplications).listFiles() != null) { "Нет организаций участников" }
+fun addOrganisations(applications: List<File>): List<Organisation> {
 
-    return File(pathApplications).listFiles()!!.map { Organisation.applicationToOrg(pathApplications + "/" + it.name) }
+    return applications.map { Organisation.applicationToOrg(it) }
 }
 
-fun makeCompetition(pathEvent: String, targetPath: String = "comp", pathApplications: String): Competition {
+fun makeCompetition(eventFile: File, targetPath: String = "comp", applications: List<File>): Competition {
     val mainDirectory = File(System.getProperty("user.dir"), targetPath) //currentWorkingDirectory
     mainDirectory.mkdirs() //это место мы доделали, здесь создается директория
     var eventName = ""
     var eventDate = LocalDate.parse("2021-11-21")
     var date: List<String>
-    check(File(pathEvent).exists()) {
-        logger.error { "Не существует файла с именем $pathEvent" }
-        "Не существует файла с именем $pathEvent"
-    }
-    csvReader().open(pathEvent) {
+    csvReader().open(eventFile) {
         readAllWithHeaderAsSequence().forEach { row: Map<String, String> ->
             check(row.size == 2) { "Нет названия или даты соревнования" }
             eventName = checkMapElement(row["Название"])
@@ -33,5 +28,5 @@ fun makeCompetition(pathEvent: String, targetPath: String = "comp", pathApplicat
             )
         }
     }
-    return Competition(eventName, eventDate, addOrganisations(pathApplications))
+    return Competition(eventName, eventDate, addOrganisations(applications))
 }
