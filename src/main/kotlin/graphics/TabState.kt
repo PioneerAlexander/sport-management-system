@@ -34,7 +34,15 @@ enum class TabState {
 lateinit var compeTition: Competition
 
 fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
-    val participantList = mutableListOf(mutableListOf(mutableStateOf("")))
+    val participantList = mutableListOf(mutableListOf(mutableStateOf("name"),mutableStateOf("surname"),
+        mutableStateOf("ageGroup"),
+        mutableStateOf("birthYear"),
+        mutableStateOf("sportsCategory"),
+        mutableStateOf("organisation"),
+        mutableStateOf("startNumber"),
+        mutableStateOf("hour"),
+        mutableStateOf("minute"),
+        mutableStateOf("second")))
     logger.info { "Вы здесь" }
     compeTition.participants.forEach {
         participantList.add(
@@ -53,7 +61,6 @@ fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
         )
     }
     logger.info { "После" }
-    participantList.removeAt(0)
     return participantList
 }
 
@@ -69,8 +76,9 @@ fun ListsState(state: MutableState<State>): State {
             Icons.Rounded.AddCircle to TabState.TEAMS,
             Icons.Rounded.FavoriteBorder to TabState.NOTEOFPARTICIPANTS
         )
+
+    val tabState = remember { mutableStateOf(0) }
     Column {
-        val tabState = remember { mutableStateOf(0) }
         TabRow(selectedTabIndex = tabState.value, divider = {}, modifier = Modifier.height(50.dp)) {
             tabs.withIndex().forEach() { (index, tab) ->
                 Tab(
@@ -87,7 +95,7 @@ fun ListsState(state: MutableState<State>): State {
 //                    0 -> state.value = State.ZERO
             2 -> {
                 logger.info { "uq" }
-                Table(Tables.tableCreateParticipant).show()
+                Table(Tables.tableCreateParticipant).show(false)
             }
             else -> {}
         }
