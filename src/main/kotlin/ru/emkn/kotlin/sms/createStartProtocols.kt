@@ -12,7 +12,7 @@ fun createStartProtocols(targetPath: String = "comp", competition: Competition) 
     var startNumber = 0
     var time = LocalTime.of(12, 0, 0, 0)
     for ((index, category) in mappedParticipants.keys.withIndex()) {
-        csvWriter().open("comp/startProtocols/StartProtocol$index.csv") {
+        csvWriter().open("$targetPath/startProtocols/StartProtocol$index.csv") {
             writeRow(
                 listOf(category, "", "", "", "", "")
             )

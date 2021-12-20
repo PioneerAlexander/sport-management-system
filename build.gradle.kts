@@ -1,6 +1,7 @@
 import org.jetbrains.compose.compose
 
 version = "1.0"
+val exposedVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.6.10"
@@ -27,6 +28,10 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     testImplementation ("org.jetbrains.kotlin:kotlin-test:1.6.10")
     testImplementation ("org.jetbrains.kotlin:kotlin-test-junit:1.6.10")
+    implementation("com.h2database:h2:1.4.199")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 }
 
 compose.desktop {
