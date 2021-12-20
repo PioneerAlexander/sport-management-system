@@ -56,6 +56,8 @@ enum class State {
 }
 
 object Tables {
+
+    var tableCreateParticipant = mutableListOf(mutableListOf(mutableStateOf("")))
     var startProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
     var finishProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
     var splitsType1 = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
@@ -204,6 +206,7 @@ fun ZeroState(state: MutableState<State>): State {
         Button(
             onClick = {
                 state.value = State.LISTS
+                Tables.tableCreateParticipant = participantTableCreate()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
@@ -290,7 +293,7 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
             when (type) {
                 InputFilesType.EVENT -> Files.event.value = files
                 InputFilesType.APPLICATIONS -> Files.applications.value = files
-                else -> throw Exception("bitch")
+                else -> Files.saved.value = files
             }
             onClick()
         }
