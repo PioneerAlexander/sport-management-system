@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import java.io.File
 
 class Organisation(val name: String, val members: List<Participant> = listOf()) {
 
@@ -27,11 +28,11 @@ class Organisation(val name: String, val members: List<Participant> = listOf()) 
     }
 
     companion object {
-        fun applicationToOrg(fileName: String): Organisation {
+        fun applicationToOrg(file: File): Organisation {
             //check how kotlin-csv works https://github.com/doyaaaaaken/kotlin-csv
             var name = ""
             val members: MutableList<Participant> = mutableListOf()
-            csvReader().open(fileName) {
+            csvReader().open(file) {
                 val firstStringList = readNext()
                 try {
                     check(firstStringList != null)

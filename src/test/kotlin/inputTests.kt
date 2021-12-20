@@ -1,4 +1,5 @@
 import ru.emkn.kotlin.sms.*
+import java.io.File
 import java.time.LocalTime
 import kotlin.test.*
 
@@ -7,7 +8,7 @@ internal class TestOfInput {
 
     @Test
     fun testGetSportClasses() {
-        val actual = getSportClasses("src/test/resources/test1_classes.csv")
+        val actual = getSportClasses(File("src/test/resources/test1_classes.csv"))
         val expected = mapOf(
             Pair("1", Distance("МЖ9 10")),
             Pair("2", Distance("МЖ9 10"))
@@ -20,7 +21,7 @@ internal class TestOfInput {
 
     @Test
     fun getNeededPath() {
-        val actual = getMapDistanceNameToNeededPath("src/test/resources/getNeededPathTestData.csv")
+        val actual = getMapDistanceNameToNeededPath(File("src/test/resources/getNeededPathTestData.csv"))
         val expected = mutableMapOf<String, NeededPath>()
         expected["1"] = NeededPath(
             listOf(
@@ -46,7 +47,7 @@ internal class TestOfInput {
 
     @Test
     fun newSplitsInputTest1() {
-        val actual = splitsInputNew("src/test/resources/splitsByNameNewFormat")
+        val actual = splitsInputNew(File("src/test/resources/splitsByNameNewFormat").listFiles().map { it!! })
         val expected = mutableMapOf<String, List<Split>>()
         expected["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),
@@ -65,7 +66,7 @@ internal class TestOfInput {
 
     @Test
     fun newSplitsInputTest2() {
-        val actual = splitsInputNew("src/test/resources/splitsByNumNewFormat")
+        val actual = splitsInputNew(File("src/test/resources/splitsByNumNewFormat").listFiles().map { it!! })
         val expected = mutableMapOf<String, List<Split>>()
         expected["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),
@@ -84,7 +85,7 @@ internal class TestOfInput {
 
     @Test
     fun newSplitsInputTest3() {
-        val actual = splitsInputNew("src/test/resources/multyTypeSplitsInput")
+        val actual = splitsInputNew(File("src/test/resources/multyTypeSplitsInput").listFiles().map { it!! })
         val expected = mutableMapOf<String, List<Split>>()
         expected["007"] = listOf(
             Split("1km", LocalTime.of(12, 7, 15)),
