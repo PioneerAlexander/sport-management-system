@@ -25,6 +25,7 @@ fun startOnCl(eventFile: File, applications: List<File>, folder: String) {
     val competition = makeCompetition(eventFile, folder, applications)
     createStartProtocols(folder, competition)
     saveCompetition(folder, competition)
+    myDB.saveCompetition(competition)
 }
 
 fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
@@ -52,6 +53,7 @@ fun main(args: Array<String>) {
                     File(args[2]).listFiles().map { it!! }) //path to file event.csv
 
                 createStartProtocols(args[3], competition)
+                myDB.saveCompetition(competition)
                 saveCompetition(args[3], competition) //saves start log in the path with pathName 'comp'
             }
             "finish" -> {

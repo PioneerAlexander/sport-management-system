@@ -9,14 +9,14 @@ import ru.emkn.kotlin.sms.Participant
 import java.time.LocalTime
 
 object CompetitionsT : IntIdTable("CompetitionsT") {
-    val sequelId: Column<Int> = integer("id").uniqueIndex()
+    //val sequelId: Column<Int> = integer("sequelId").uniqueIndex()
     val name: Column<String> = varchar("name", 255)
     val date: Column<String> = varchar("date", 255)
 
     fun toCompetition(row: ResultRow): Competition = Competition(
         row[name],
         LocalDate.parse(row[date]),
-        ParticipantsT.select{ParticipantsT.competitionId eq row[sequelId]}.map { ParticipantsT.toParticipant(it) }.groupBy { it.organisation }
+        ParticipantsT.select{ParticipantsT.competitionId eq row[id].value}.map { ParticipantsT.toParticipant(it) }.groupBy { it.organisation }
             .map { Organisation(it.key, it.value) })
     fun saveCompetition(competition: Competition){
         val curCompId = CompetitionsT.insertAndGetId {
@@ -43,7 +43,7 @@ object CompetitionsT : IntIdTable("CompetitionsT") {
 
 
 object ParticipantsT : IntIdTable("ParticipantsT") {
-    val sequelId: Column<Int> = integer("id").uniqueIndex()
+    //val sequelId: Column<Int> = integer("sequelId").uniqueIndex()
     val competitionId = integer("competitionId")
     val name: Column<String> = varchar("name", 255)
     val surname: Column<String> = varchar("surname", 255)

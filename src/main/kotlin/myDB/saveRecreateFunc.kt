@@ -16,7 +16,16 @@ fun saveCompetition(competition: Competition) {
 
 fun recreateCompetition(): Competition {
     Database.connect("jdbc:h2:./myh2file", "org.h2.Driver")
-    return transaction {
+    val competition = transaction {
         CompetitionsT.toCompetition(CompetitionsT.selectAll().first())
+    }
+    return competition
+}
+
+fun clean(){
+    Database.connect("jdbc:h2:./myh2file", "org.h2.Driver")
+    transaction {
+        CompetitionsT.deleteAll()
+        ParticipantsT.deleteAll()
     }
 }
