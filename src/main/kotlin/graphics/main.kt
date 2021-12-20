@@ -49,16 +49,19 @@ import java.io.File
 
 
 enum class State {
-    ZERO, DOCS, IMPORT, FINAL
+    ZERO, DOCS, IMPORT, FINAL, START_PROTOCOLS, CHECKPOINTS
 }
 
 
 object Files {
     var directory = mutableStateOf("")
+    var gotDirectory = mutableStateOf(false)
     var event = mutableStateOf(listOf<File>())
+    var gotEvent = mutableStateOf(false)
     var applications = mutableStateOf(listOf<File>())
+    var gotApplications = mutableStateOf(false)
     var saved = mutableStateOf(listOf<File>())
-    var loadingSaved = false
+    var loadingSaved = mutableStateOf(false)
 }
 
 
@@ -132,20 +135,59 @@ fun ZeroState(state: MutableState<State>): State {
         {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Ввод",
+                text = "Создать/загрузить",
                 color = Color.White,
                 fontSize = 20.sp
             )
         }
+        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value && Files.gotDirectory.value)) {
+            Button(
+                onClick = {
+                    state.value = State.START_PROTOCOLS
+                    /**
+                     * Если loadingSaved нужно просто показать, иначе сгенерировать и показать,
+                     * редактировать нельзя (mutable = false)
+                     */
+                    TODO("Генерация стартовых протоколов")
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+            ) {
+                Text(
+                    text = "Стартовые протоколы",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
+        }
         Button(
-            onClick = { state.value = State.ZERO },
+            onClick = {
+                state.value = State.CHECKPOINTS
+                TODO("implement 2 types of input")
+            },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
         )
         {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Вывод",
+                text = "Данные соревнования",
+                color = Color.White,
+                fontSize = 20.sp
+            )
+        }
+        Button(
+            onClick = {
+                state.value = State.FINAL
+                TODO("implement final results (by teams?)")
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        )
+        {
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = "Результаты",
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -168,7 +210,7 @@ fun ZeroState(state: MutableState<State>): State {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ImportState(state: MutableState<State>): State {
-    Button(onClick = {state.value = State.ZERO}){Text(text = "Назад", color = Color.White)}
+    Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
         TextField(
@@ -180,12 +222,17 @@ fun ImportState(state: MutableState<State>): State {
             placeholder = { Text("Имя папки для сохранения.") }
         )
         Files.event.value =
-            NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp))
+            NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
+                Files.gotEvent.value = true
+            }
         Files.applications.value =
-            NewFileButton("Все файлы заявок", Modifier.align(Alignment.CenterHorizontally).width(300.dp))
+            NewFileButton("Все файлы заявок", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
+                Files.gotApplications.value = true
+            }
 
         Files.saved.value =
             NewFileButton("Загрузить сохраненное", Modifier.align(Alignment.CenterHorizontally).width(300.dp)) {
+                Files.loadingSaved.value = true
                 state.value = State.ZERO
             }
     }
