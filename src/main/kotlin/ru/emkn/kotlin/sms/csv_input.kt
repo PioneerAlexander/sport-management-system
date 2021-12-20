@@ -13,41 +13,7 @@ class Input {
         var classesFile: File = File("") // Path to csv file
         var coursesFile: File = File("")
         var splitsFiles: List<File> = listOf()
-        /*
-        fun check(): Boolean {
-            return scvFileCheck(classesPath) and (scvFileCheck(coursesPath) and splitsPathCheck(splitsPath))
-        }
-
-        private fun scvFileCheck(path: String): Boolean {
-            if (!File(path).isFile) {
-                logger.error { "Неверный путь файла $path" }
-                return false
-            }
-            if (File(path).extension != ".csv") {
-                logger.error { "Неверный формат файла $path" }
-                return false
-            }
-            return true
-        }
-
-        private fun splitsPathCheck(path: String): Boolean {
-            if (!File(path).isDirectory) {
-                logger.error { "Неверный путь к директории с промежуточными результатами" }
-                return false
-            }
-            // File(path) существует
-            File(path).list()!!.toList().forEach {
-                if (it == null) {
-                    logger.warn { "Неверный файл промежуточного результата" }
-                }
-                if (!scvFileCheck("$path/$it")) {
-                    return false
-                }
-            }
-            return true
-        }
-
-         */
+        var splitsMap: Map<String, MutableList<MutableSplit>> = mapOf()
     }
 }
 

@@ -8,6 +8,8 @@ data class NeededPath(val list: List<PathSingleton>)
 
 data class Split(val name: String, val time: LocalTime)
 
+data class MutableSplit(var name: String, var time: LocalTime)
+
 data class ActualPath(val list: List<Split>) // отсортирован по времени
 
 data class MapsForParticipant(
@@ -15,17 +17,15 @@ data class MapsForParticipant(
     val numToActualPath: Map<String, ActualPath>
 )
 
-fun mapsGenerator(): MapsForParticipant { // <- INPUT
-    return oldMapsGenerator()
-}
 
-fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
+
+
+fun mapsGenerator(): MapsForParticipant { // <- INPUT
     return MapsForParticipant(
         getMapGroupToNeededPathNew(Input.classesFile, Input.coursesFile),
-        splitsInputNew(Input.splitsFiles)
+        Input.splitsMap.mapValues { ActualPath(it.value.toList().map { Split(it.name, it.time) }) }
     )
 }
-
 
 
 class ParticipantsPath(private val participant: Participant) {

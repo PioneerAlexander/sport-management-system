@@ -28,11 +28,17 @@ fun startOnCl(eventFile: File, applications: List<File>, folder: String) {
     myDB.saveCompetition(competition)
 }
 
-fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
-    val competition = recreateSavedCompetition(recreateFile)
+fun tillSplitsInputOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
     Input.coursesFile = coursesFile
     Input.splitsFiles = splitsFiles
     Input.classesFile = classesFile
+    Input.splitsMap = splitsInputNew(Input.splitsFiles).mapValues {
+        it.value.list.map { MutableSplit(it.name, it.time) }.toMutableList()
+    }
+}
+
+fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
+    val competition = recreateSavedCompetition(recreateFile)
     generateResults(competition, folder)
     generateTeamResults(competition, folder)
 }
