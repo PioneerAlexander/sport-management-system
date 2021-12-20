@@ -5,7 +5,7 @@ import kotlin.test.*
 internal class FinalResult{
     @Test
     fun testGenerateResults(){
-        val competition = recreateSavedCompetition("src/test/resources/finResTestData")
+        val competition = recreateSavedCompetition(File("src/test/resources/finResTestData/data.csv"))
         Input.classesFile = File("src/test/resources/finResTestData/classes.csv") //way to path with classes
         Input.coursesFile = File("src/test/resources/finResTestData/courses.csv") //way to path with courses
         Input.splitsFiles =  File("src/test/resources/finResTestData/splits").listFiles().map { it!! }//path to folder with splits
@@ -16,7 +16,7 @@ internal class FinalResult{
     }
     @Test
     fun testGenerateTeamResults(){
-        val competition = recreateSavedCompetition("src/test/resources/finResTestData")
+        val competition = recreateSavedCompetition(File("src/test/resources/finResTestData/data.csv"))
         Input.classesFile = File("src/test/resources/finResTestData/classes.csv") //way to path with classes
         Input.coursesFile = File("src/test/resources/finResTestData/courses.csv") //way to path with courses
         Input.splitsFiles =  File("src/test/resources/finResTestData/splits").listFiles().map { it!! }//path to folder with splits

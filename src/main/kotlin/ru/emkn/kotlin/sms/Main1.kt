@@ -31,14 +31,14 @@ fun main(args: Array<String>) {
             "start" -> {
                 checkArgsSize(args, 4)
                 logger.info { "переходим к созданию соревнования, получая из файла event его название и дату" }
-                val competition = makeCompetition(args[1], args[3], args[2]) //path to file event.csv
+                val competition = makeCompetition(File(args[1]), args[3], File(args[2]).listFiles().map { it!! }) //path to file event.csv
 
                 createStartProtocols(args[3], competition)
                 saveCompetition(args[3], competition) //saves start log in the path with pathName 'comp'
             }
             "finish" -> {
                 checkArgsSize(args, 5)
-                val competition = recreateSavedCompetition(args[4])
+                val competition = recreateSavedCompetition(File(args[4]))
                 Input.classesFile = File( args[1]) //path to file with classes
                 Input.coursesFile = File(args[2]) //path to file with courses
                 Input.splitsFiles = File(args[3]).listFiles().map { it!! } //path to foldr with splits
