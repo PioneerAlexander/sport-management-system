@@ -1,5 +1,8 @@
 package ru.emkn.kotlin.sms
 
+import androidx.compose.runtime.mutableStateOf
+import graphics.Table
+import graphics.compeTition
 import mu.KotlinLogging
 import java.io.File
 
@@ -26,6 +29,7 @@ fun startOnCl(eventFile: File, applications: List<File>, folder: String) {
     createStartProtocols(folder, competition)
     saveCompetition(folder, competition)
     myDB.saveCompetition(competition)
+    compeTition = competition
 }
 
 fun tillSplitsInputOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {

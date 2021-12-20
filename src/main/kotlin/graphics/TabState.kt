@@ -24,16 +24,19 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import ru.emkn.kotlin.sms.Competition
+import ru.emkn.kotlin.sms.logger
 import ru.emkn.kotlin.sms.recreateSavedCompetition
 
 enum class TabState {
     GROUPS, PARTICIPANTS, DISTANCES, TEAMS, NOTEOFPARTICIPANTS
 }
 
-@Composable
-fun participantTableCreate():  MutableList<MutableList<MutableState<String>>> {
+lateinit var compeTition: Competition
+
+fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
     val participantList = mutableListOf(mutableListOf(mutableStateOf("")))
-    recreateCompetition().participants.forEach {
+    logger.info { "Вы здесь" }
+    compeTition.participants.forEach {
         participantList.add(
             mutableListOf(
                 mutableStateOf(it.name),
@@ -49,6 +52,8 @@ fun participantTableCreate():  MutableList<MutableList<MutableState<String>>> {
             )
         )
     }
+    logger.info { "После" }
+    participantList.removeAt(0)
     return participantList
 }
 
@@ -74,11 +79,17 @@ fun ListsState(state: MutableState<State>): State {
                     onClick = {
                         tabState.value = index
                     })
-                when (index) {
-                    0 -> state.value = State.ZERO
-                    2 -> Table(participantTableCreate()).show()
-                }
+                logger.info { "тут" }
+
             }
+        }
+        when (tabState.value) {
+//                    0 -> state.value = State.ZERO
+            2 -> {
+                logger.info { "uq" }
+                Table(Tables.tableCreateParticipant).show()
+            }
+            else -> {}
         }
     }
 
