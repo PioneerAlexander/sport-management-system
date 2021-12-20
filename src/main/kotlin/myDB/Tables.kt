@@ -16,9 +16,11 @@ object CompetitionsT : IntIdTable("CompetitionsT") {
     fun toCompetition(row: ResultRow): Competition = Competition(
         row[name],
         LocalDate.parse(row[date]),
-        ParticipantsT.select{ParticipantsT.competitionId eq row[id].value}.map { ParticipantsT.toParticipant(it) }.groupBy { it.organisation }
+        ParticipantsT.select { ParticipantsT.competitionId eq row[id].value }.map { ParticipantsT.toParticipant(it) }
+            .groupBy { it.organisation }
             .map { Organisation(it.key, it.value) })
-    fun saveCompetition(competition: Competition){
+
+    fun saveCompetition(competition: Competition) {
         val curCompId = CompetitionsT.insertAndGetId {
             it[name] = competition.name
             it[date] = competition.date.toString()

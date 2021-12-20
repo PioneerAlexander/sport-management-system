@@ -2,15 +2,13 @@ package ru.emkn.kotlin.sms
 
 import kotlinx.datetime.*
 
-
-class Competition(val name: String, val date: LocalDate, val orgs: List<Organisation> = listOf()) {
+class Competition(val name: String, val date: LocalDate, var orgs: List<Organisation> = listOf()) {
 
     val participants: List<Participant>
         get() = this.orgs.flatMap { it.members }
 
     val size: Int
         get() = this.participants.size
-
 
 
     override fun equals(other: Any?): Boolean {

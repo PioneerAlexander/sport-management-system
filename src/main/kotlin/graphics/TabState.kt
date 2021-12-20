@@ -17,17 +17,41 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import myDB.CompetitionsT
+import myDB.ParticipantsT
+import myDB.recreateCompetition
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import ru.emkn.kotlin.sms.Competition
+import ru.emkn.kotlin.sms.recreateSavedCompetition
 
 enum class TabState {
     GROUPS, PARTICIPANTS, DISTANCES, TEAMS, NOTEOFPARTICIPANTS
 }
 
 @Composable
-fun distributorTabState(state: MutableState<State>, enum: Enum<*>) {
-    when (enum) {
-        State.ZERO ->  state.value = State.ZERO
+fun participantTableCreate():  MutableList<MutableList<MutableState<String>>> {
+    val participantList = mutableListOf(mutableListOf(mutableStateOf("")))
+    recreateCompetition().participants.forEach {
+        participantList.add(
+            mutableListOf(
+                mutableStateOf(it.name),
+                mutableStateOf(it.surname),
+                mutableStateOf(it.ageGroup),
+                mutableStateOf(it.birthYear),
+                mutableStateOf(it.sportsCategory),
+                mutableStateOf(it.organisation),
+                mutableStateOf(it.startNumber),
+                mutableStateOf(it.startTime.hour.toString()),
+                mutableStateOf(it.startTime.minute.toString()),
+                mutableStateOf(it.startTime.second.toString())
+            )
+        )
     }
+    return participantList
 }
+
 
 @Composable
 fun ListsState(state: MutableState<State>): State {
@@ -49,10 +73,11 @@ fun ListsState(state: MutableState<State>): State {
                     selected = tabState.value == index,
                     onClick = {
                         tabState.value = index
-                        if (tab.second == State.ZERO) {
-                            state.value = State.ZERO
-                        }
                     })
+                when (index) {
+                    0 -> state.value = State.ZERO
+                    2 -> Table(participantTableCreate()).show()
+                }
             }
         }
     }
