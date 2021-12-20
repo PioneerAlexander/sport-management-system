@@ -4,7 +4,8 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import java.io.File
 import java.time.LocalTime
 
-fun createStartProtocols(targetPath: String = "comp", competition: Competition) {
+fun createStartProtocols(targetPath: String = "comp", competition: Competition): List<List<String>> {
+    val protocolGenerator = mutableListOf(listOf<String>())
     val file = File(targetPath, "startProtocols")
     file.mkdirs()
     val mappedParticipants = competition.participants.groupBy { it.ageGroup }
@@ -16,6 +17,7 @@ fun createStartProtocols(targetPath: String = "comp", competition: Competition) 
             writeRow(
                 listOf(category, "", "", "", "", "")
             )
+            protocolGenerator.add(listOf(category, "", "", "", "", ""))
             for (participant in mappedParticipants[category]!!.shuffled()) {
                 var participantNumber = startNumber.toString()
                 while (participantNumber.length < numberLength) {
@@ -29,9 +31,16 @@ fun createStartProtocols(targetPath: String = "comp", competition: Competition) 
                         participant.birthYear, participant.sportsCategory, time.forPrint()
                     )
                 )
+                protocolGenerator.add(
+                    listOf(
+                        participantNumber, participant.surname, participant.name,
+                        participant.birthYear, participant.sportsCategory, time.forPrint()
+                    )
+                )
                 time = time.plusMinutes(1)
                 startNumber += 1
             }
         }
     }
+    return protocolGenerator
 }

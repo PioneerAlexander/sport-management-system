@@ -5,8 +5,8 @@ import java.time.LocalTime
 import kotlin.math.max
 
 
-fun generateResults(competition: Competition, outputPath: String = "comp") {
-
+fun generateResults(competition: Competition, outputPath: String = "comp"): List<List<String>> {
+    val protocolGenerator = mutableListOf(listOf<String>())
     val participants = competition.participants
     val sortedByAgeGroup = participants.groupBy { it.ageGroup }
 
@@ -15,7 +15,22 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
         for (ageGroup in sortedByAgeGroup.keys) {
             var index = 0
             writeRow(ageGroup, "", "", "", "", "", "", "", "", "")
+            protocolGenerator.add(listOf(ageGroup, "", "", "", "", "", "", "", "", ""))
             writeRow(
+                listOf(
+                    "№ п/п",
+                    "Номер",
+                    "Фамилия",
+                    "Имя",
+                    "Г.р.",
+                    "Разр.",
+                    "Команда",
+                    "Результат",
+                    "Место",
+                    "Отставание"
+                )
+            )
+            protocolGenerator.add(
                 listOf(
                     "№ п/п",
                     "Номер",
@@ -50,6 +65,19 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                             index + 1
                         )
                     )
+                    protocolGenerator.add(
+                        listOf(
+                            (index + 1).toString(),
+                            participant.startNumber,
+                            participant.surname,
+                            participant.name,
+                            participant.birthYear,
+                            participant.sportsCategory,
+                            participant.organisation,
+                            timeDifference(participant.startTime, participant.finishTime).forPrint(),
+                            (index + 1).toString()
+                        )
+                    )
                 } else {  //все честные кроме победителя
                     participant.points = max(
                         0,
@@ -77,6 +105,25 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                             }"
                         )
                     )
+                    protocolGenerator.add(
+                        listOf(
+                            (index + 1).toString(),
+                            participant.startNumber,
+                            participant.surname,
+                            participant.name,
+                            participant.birthYear,
+                            participant.sportsCategory,
+                            participant.organisation,
+                            timeDifference(participant.startTime, participant.finishTime).forPrint(),
+                            (index + 1).toString(),
+                            "+${
+                                timeDifference(
+                                    winnerTime,
+                                    timeDifference(participant.startTime, participant.finishTime)
+                                ).forPrint()
+                            }"
+                        )
+                    )
                 }
                 index += 1
             }
@@ -94,17 +141,29 @@ fun generateResults(competition: Competition, outputPath: String = "comp") {
                         "снят"
                     )
                 )
+                protocolGenerator.add(listOf(
+                    (index + 1).toString(),
+                    participant.startNumber,
+                    participant.surname,
+                    participant.name,
+                    participant.birthYear,
+                    participant.sportsCategory,
+                    participant.organisation,
+                    "снят"
+                ))
             }
         }
     }
+    return protocolGenerator
 }
 
 fun generateTeamResults(
     competition: Competition,
     outputPath: String = "comp"
-) { //можно вызывать только после generateResults
+): List<List<String>> { //можно вызывать только после generateResults
     val sortedOrganisations =
         competition.orgs.sortedByDescending { org: Organisation -> org.members.sumOf { it.points } }
+    val protocolGenerator = mutableListOf(listOf<String>())
     csvWriter().open("$outputPath/teamResults.csv") {
         writeRow(
             listOf(
@@ -114,6 +173,12 @@ fun generateTeamResults(
                 "Результат",
             )
         )
+        protocolGenerator.add(listOf(
+            "№ п/п",
+            "Название",
+            "Место",
+            "Результат",
+        ))
         for ((index, organisation) in sortedOrganisations.withIndex()) {
             writeRow(
                 listOf(
@@ -125,9 +190,20 @@ fun generateTeamResults(
                     }
                 )
             )
+            protocolGenerator.add(
+                listOf(
+                    (index + 1).toString(),
+                    organisation.name,
+                    (index + 1).toString(),
+                    organisation.members.sumOf {
+                        it.points
+                    }.toString()
+                )
+            )
         }
 
     }
+    return protocolGenerator
 }
 
 fun timeDifference(start: LocalTime, finish: LocalTime): LocalTime =
