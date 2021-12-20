@@ -1,4 +1,5 @@
 package ru.emkn.kotlin.sms
+
 import java.time.LocalTime
 
 data class PathSingleton(val numberOfVisits: Int, val checkpointsOptions: List<String>)
@@ -15,16 +16,15 @@ data class MapsForParticipant(
 )
 
 fun mapsGenerator(): MapsForParticipant { // <- INPUT
-     return oldMapsGenerator() //TODO()
+    return oldMapsGenerator()
 }
 
 fun oldMapsGenerator(): MapsForParticipant { // <- INPUT
     return MapsForParticipant(
-        getMapGroupToNeededPathNew(Input.classesPath, Input.coursesPath),
-        splitsInputNew(Input.splitsPath)
+        getMapGroupToNeededPathNew(Input.classesFile, Input.coursesFile),
+        splitsInputNew(Input.splitsFiles)
     )
 }
-
 
 
 
@@ -89,6 +89,7 @@ class ParticipantsPath(private val participant: Participant) {
 
 }
 
+// ActualPath отсортирован по времени
 fun NeededPath.doesSuits(real: ActualPath): Boolean {
     var curState = true
     var itInReal = 0
@@ -96,7 +97,7 @@ fun NeededPath.doesSuits(real: ActualPath): Boolean {
     this.list.forEach { pathSingleton ->
         val checkSet = namesOfRealList.subList(itInReal, itInReal + pathSingleton.numberOfVisits).toSet()
         curState = curState and (checkSet.size == pathSingleton.numberOfVisits)
-        curState = curState and(pathSingleton.checkpointsOptions.containsAll(checkSet))
+        curState = curState and (pathSingleton.checkpointsOptions.containsAll(checkSet))
         itInReal += pathSingleton.numberOfVisits
     }
     return curState

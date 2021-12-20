@@ -1,6 +1,7 @@
 package ru.emkn.kotlin.sms
 
 import mu.KotlinLogging
+import java.io.File
 
 val logger = KotlinLogging.logger { }
 
@@ -38,9 +39,9 @@ fun main(args: Array<String>) {
             "finish" -> {
                 checkArgsSize(args, 5)
                 val competition = recreateSavedCompetition(args[4])
-                Input.classesPath = args[1] //path to file with classes
-                Input.coursesPath = args[2] //path to file with courses
-                Input.splitsPath = args[3] //path to foldr with splits
+                Input.classesFile = File( args[1]) //path to file with classes
+                Input.coursesFile = File(args[2]) //path to file with courses
+                Input.splitsFiles = File(args[3]).listFiles().map { it!! } //path to foldr with splits
                 generateResults(competition, args[4])
                 generateTeamResults(competition, args[4])
 
