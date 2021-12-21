@@ -159,27 +159,7 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
-            Button(
-                onClick = {
-                    state.value = State.START_PROTOCOLS
-                    if (Files.loadingSaved.value) {
-                        recreateSavedCompetition(Files.saved.value.first())
-                    } else {
 
-                    }
-                    //TODO("Генерация стартовых протоколов")
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-            ) {
-                Text(
-                    text = "Стартовые протоколы",
-                    color = Color.White,
-                    fontSize = 20.sp
-                )
-            }
-        }
         Button(
             onClick = {
                 state.value = State.CHECKPOINTS
@@ -195,39 +175,39 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        Button(
-            onClick = {
-                state.value = State.FINAL
-                finalResOnCl(Files.classes.value.first(), Files.courses.value.first(), Files.splits.value, Files.directory.value)
-                TODO("implement final results (by teams?)")
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-        )
-        {
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Результаты",
-                color = Color.White,
-                fontSize = 20.sp
-            )
-        }
-        Button(
-            onClick = {
-                state.value = State.LISTS
-                Tables.tableCreateParticipant = participantTableCreate()
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-        )
-        {
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Списки",
-                color = Color.White,
-                fontSize = 20.sp
-            )
-        }
+//        Button(
+//            onClick = {
+//                state.value = State.FINAL
+//                finalResOnCl(Files.classes.value.first(), Files.courses.value.first(), Files.splits.value, Files.directory.value)
+//                TODO("implement final results (by teams?)")
+//            },
+//            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+//        )
+//        {
+//            Text(
+//                modifier = Modifier.align(Alignment.CenterVertically),
+//                text = "Результаты",
+//                color = Color.White,
+//                fontSize = 20.sp
+//            )
+//        }
+//        Button(
+//            onClick = {
+//                state.value = State.LISTS
+//                Tables.tableCreateParticipant = participantTableCreate()
+//            },
+//            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+//        )
+//        {
+//            Text(
+//                modifier = Modifier.align(Alignment.CenterVertically),
+//                text = "Списки",
+//                color = Color.White,
+//                fontSize = 20.sp
+//            )
+//        }
     }
     Row(modifier = Modifier.fillMaxHeight())
     {
@@ -269,17 +249,19 @@ fun ImportState(state: MutableState<State>): State {
             },
             type = InputFilesType.APPLICATIONS
         )
-
-
-        NewFileButton(
-            "Загрузить сохраненное",
-            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
-            {
-                Files.loadingSaved.value = true
-                state.value = State.ZERO
-            },
-            type = InputFilesType.SAVED
-        )
+        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
+            Button(
+                onClick = { state.value = State.START_PROTOCOLS },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+            ) {
+                Text(
+                    text = "Стартовые протоколы",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
+        }
     }
     return state.value
 
@@ -318,6 +300,26 @@ fun CheckpointsState(state: MutableState<State>): State {
             },
             type = InputFilesType.SPLITS
         )
+
+        Button(
+            onClick = {
+                state.value = State.FINAL
+                finalResOnCl(Files.classes.value.first(), Files.courses.value.first(), Files.splits.value, Files.directory.value)
+                TODO("implement final results (by teams?)")
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        )
+        {
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = "Результаты",
+                color = Color.White,
+                fontSize = 20.sp
+            )
+        }
+
+
     }
     return state.value
 
