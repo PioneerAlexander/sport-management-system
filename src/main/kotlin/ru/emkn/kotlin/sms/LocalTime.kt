@@ -1,4 +1,5 @@
 package ru.emkn.kotlin.sms
+
 import java.time.LocalTime
 
 fun LocalTime.forPrint(): String { //не обрезать конец строки, если в секундах нули

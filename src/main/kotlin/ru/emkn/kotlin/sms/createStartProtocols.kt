@@ -24,6 +24,7 @@ fun createStartProtocols(targetPath: String = "comp", competition: Competition):
                     participantNumber = "0$participantNumber"
                 }
                 participant.startNumber = participantNumber
+                logger.info { "${participant.name}, ${participant.startNumber}" }
                 participant.startTime = time
                 writeRow(
                     listOf(

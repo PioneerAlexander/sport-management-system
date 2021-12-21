@@ -141,16 +141,18 @@ fun generateResults(competition: Competition, outputPath: String = "comp"): List
                         "снят"
                     )
                 )
-                protocolGenerator.add(listOf(
-                    (index + 1).toString(),
-                    participant.startNumber,
-                    participant.surname,
-                    participant.name,
-                    participant.birthYear,
-                    participant.sportsCategory,
-                    participant.organisation,
-                    "снят"
-                ))
+                protocolGenerator.add(
+                    listOf(
+                        (index + 1).toString(),
+                        participant.startNumber,
+                        participant.surname,
+                        participant.name,
+                        participant.birthYear,
+                        participant.sportsCategory,
+                        participant.organisation,
+                        "снят"
+                    )
+                )
             }
         }
     }
@@ -173,12 +175,14 @@ fun generateTeamResults(
                 "Результат",
             )
         )
-        protocolGenerator.add(listOf(
-            "№ п/п",
-            "Название",
-            "Место",
-            "Результат",
-        ))
+        protocolGenerator.add(
+            listOf(
+                "№ п/п",
+                "Название",
+                "Место",
+                "Результат",
+            )
+        )
         for ((index, organisation) in sortedOrganisations.withIndex()) {
             writeRow(
                 listOf(

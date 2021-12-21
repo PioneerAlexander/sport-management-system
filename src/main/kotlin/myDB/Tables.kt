@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.*
 import ru.emkn.kotlin.sms.Competition
 import ru.emkn.kotlin.sms.Organisation
 import ru.emkn.kotlin.sms.Participant
+import ru.emkn.kotlin.sms.logger
 import java.time.LocalTime
 
 object CompetitionsT : IntIdTable("CompetitionsT") {
@@ -67,6 +68,7 @@ object ParticipantsT : IntIdTable("ParticipantsT") {
             row[sportsCategory],
             row[organisation],
         )
+        logger.info { row[startNumber] }
         participant.startNumber = row[startNumber]
         participant.startTime = LocalTime.of(row[stHour], row[stMinute], row[stSecond])
         return participant

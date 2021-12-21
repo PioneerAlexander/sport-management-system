@@ -38,8 +38,7 @@ class Participant(
         get() = ParticipantsPath(this).finishTime
 
     val isNotCheated: Boolean
-    get() = ParticipantsPath(this).isNotCheated()
-
+        get() = ParticipantsPath(this).isNotCheated()
 
 
     override fun equals(other: Any?): Boolean {
