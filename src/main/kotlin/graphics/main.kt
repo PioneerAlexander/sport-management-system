@@ -67,20 +67,21 @@ object Tables {
 }
 
 object Files {
-    var directory = mutableStateOf("")
-    var gotDirectory = mutableStateOf(false)
-    var event = mutableStateOf(listOf<File>())
-    var gotEvent = mutableStateOf(false)
-    var applications = mutableStateOf(listOf<File>())
-    var gotApplications = mutableStateOf(false)
-    var saved = mutableStateOf(listOf<File>())
-    var loadingSaved = mutableStateOf(false)
-    var splits = mutableStateOf(listOf<File>())
-    var gotSplits = mutableStateOf(false)
-    var courses = mutableStateOf(listOf<File>())
-    var gotCourses = mutableStateOf(false)
-    var classes = mutableStateOf(listOf<File>())
-    var gotClasses = mutableStateOf(false)
+    val directory = mutableStateOf("")
+    val gotDirectory = mutableStateOf(false)
+    val event = mutableStateOf(listOf<File>())
+    val gotEvent = mutableStateOf(false)
+    val applications = mutableStateOf(listOf<File>())
+    val gotApplications = mutableStateOf(false)
+    val saved = mutableStateOf(listOf<File>())
+    val loadingSaved = mutableStateOf(false)
+    val splits = mutableStateOf(listOf<File>())
+    val gotSplits = mutableStateOf(false)
+    val courses = mutableStateOf(listOf<File>())
+    val gotCourses = mutableStateOf(false)
+    val classes = mutableStateOf(listOf<File>())
+    val gotClasses = mutableStateOf(false)
+    val madeStartProtocols = mutableStateOf(false)
 }
 
 
@@ -161,6 +162,7 @@ fun ZeroState(state: MutableState<State>): State {
             Button(
                 onClick = {
                     state.value = State.START_PROTOCOLS
+                    Files.madeStartProtocols.value = true
                     if (Files.loadingSaved.value) {
                         recreateSavedCompetition(Files.saved.value.first())
                     } else {
@@ -209,21 +211,27 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        Button(
-            onClick = {
-                state.value = State.LISTS
-                Tables.tableCreateParticipant = participantTableCreate()
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-        )
-        {
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Списки",
-                color = Color.White,
-                fontSize = 20.sp
+        if (Files.gotClasses.value &&
+            Files.gotCourses.value &&
+            Files.gotSplits.value &&
+            Files.madeStartProtocols.value
+        ) {
+            Button(
+                onClick = {
+                    state.value = State.LISTS
+                    Tables.tableCreateParticipant = participantTableCreate()
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
             )
+            {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "Списки",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
         }
     }
     Row(modifier = Modifier.fillMaxHeight())
@@ -289,7 +297,8 @@ fun CheckpointsState(state: MutableState<State>): State {
     Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
-        NewFileButton("CLASSES",
+        NewFileButton(
+            "CLASSES",
             Modifier.align(Alignment.CenterHorizontally).width(300.dp),
             {
                 Files.gotClasses.value = true
@@ -337,7 +346,7 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
             when (type) {
                 InputFilesType.EVENT -> Files.event.value = files
                 InputFilesType.APPLICATIONS -> Files.applications.value = files
-   InputFilesType.SAVED -> Files.saved.value = files
+                InputFilesType.SAVED -> Files.saved.value = files
                 InputFilesType.COURSES -> Files.courses.value = files
                 InputFilesType.CLASSES -> Files.classes.value = files
                 InputFilesType.SPLITS -> Files.splits.value = files
