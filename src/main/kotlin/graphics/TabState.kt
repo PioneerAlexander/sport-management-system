@@ -138,7 +138,7 @@ fun ListsState(state: MutableState<State>): State {
                 Table(Tables.tableCreateParticipant).show(false)
             }
             5 -> {
-                Table(Tables.tableCreateSplits).show()
+                Table(Tables.tableCreateSplits).show(SaveOnSave = WhereToSave.SPLITS)
             }
             else -> {
             }
