@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import graphics.Files.directory
 import graphics.Files.loadingSaved
 import myDB.recreateCompetition
 import ru.emkn.kotlin.sms.finalResOnCl
@@ -59,6 +60,8 @@ enum class State {
 object Tables {
 
     var tableCreateParticipant = mutableListOf(mutableListOf(mutableStateOf("")))
+    var tableCreateSplits = mutableListOf(mutableListOf(mutableStateOf("")))
+    var tableCreateDistance = mutableListOf(mutableListOf(mutableStateOf("")))
     var startProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
     var finishProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
     var splitsType1 = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
@@ -82,6 +85,7 @@ object Files {
     var gotCourses = mutableStateOf(false)
     var classes = mutableStateOf(listOf<File>())
     var gotClasses = mutableStateOf(false)
+    val madeStartProtocols = mutableStateOf(false)
 }
 
 
@@ -102,7 +106,6 @@ fun main() = application {
             State.IMPORT -> ImportState(windowState)
             State.LISTS -> ListsState(windowState)
             State.CHECKPOINTS -> CheckpointsState(windowState)
-            State.START_PROTOCOLS -> StartPr(windowState, startOnCl(Files.event.value.first(), Files.applications.value, Files.directory.value))
             else -> ZeroState(windowState)
         }
     }
@@ -159,7 +162,28 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-
+        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
+            Button(
+                onClick = {
+                    state.value = State.START_PROTOCOLS
+                    Files.madeStartProtocols.value = true
+                    if (Files.loadingSaved.value) {
+                        recreateSavedCompetition(Files.saved.value.first())
+                    } else {
+                        startOnCl(Files.event.value.first(), Files.applications.value, Files.directory.value)
+                    }
+                    //TODO("Генерация стартовых протоколов")
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+            ) {
+                Text(
+                    text = "Стартовые протоколы",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
+        }
         Button(
             onClick = {
                 state.value = State.CHECKPOINTS
@@ -175,39 +199,48 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-//        Button(
-//            onClick = {
-//                state.value = State.FINAL
-//                finalResOnCl(Files.classes.value.first(), Files.courses.value.first(), Files.splits.value, Files.directory.value)
-//                TODO("implement final results (by teams?)")
-//            },
-//            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-//        )
-//        {
-//            Text(
-//                modifier = Modifier.align(Alignment.CenterVertically),
-//                text = "Результаты",
-//                color = Color.White,
-//                fontSize = 20.sp
-//            )
-//        }
-//        Button(
-//            onClick = {
-//                state.value = State.LISTS
-//                Tables.tableCreateParticipant = participantTableCreate()
-//            },
-//            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-//        )
-//        {
-//            Text(
-//                modifier = Modifier.align(Alignment.CenterVertically),
-//                text = "Списки",
-//                color = Color.White,
-//                fontSize = 20.sp
-//            )
-//        }
+        Button(
+            onClick = {
+                state.value = State.FINAL
+                finalResOnCl(
+                    Files.classes.value.first(),
+                    Files.courses.value.first(),
+                    Files.splits.value,
+                    Files.directory.value
+                )
+            },
+            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+        )
+        {
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = "Результаты",
+                color = Color.White,
+                fontSize = 20.sp
+            )
+        }
+        if(Files.gotCourses.value && Files.gotSplits.value &&
+                Files.gotClasses.value && Files.madeStartProtocols.value){
+            Button(
+                onClick = {
+                    state.value = State.LISTS
+                    Tables.tableCreateParticipant = participantTableCreate()
+                    Tables.tableCreateSplits = splitsTableCreate()
+                    Tables.tableCreateDistance = distanceTableCreate()
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
+            )
+            {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "Списки",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
+        }
     }
     Row(modifier = Modifier.fillMaxHeight())
     {
@@ -249,19 +282,17 @@ fun ImportState(state: MutableState<State>): State {
             },
             type = InputFilesType.APPLICATIONS
         )
-        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
-            Button(
-                onClick = { state.value = State.START_PROTOCOLS },
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-            ) {
-                Text(
-                    text = "Стартовые протоколы",
-                    color = Color.White,
-                    fontSize = 20.sp
-                )
-            }
-        }
+
+
+        NewFileButton(
+            "Загрузить сохраненное",
+            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
+            {
+                Files.loadingSaved.value = true
+                state.value = State.ZERO
+            },
+            type = InputFilesType.SAVED
+        )
     }
     return state.value
 
@@ -274,7 +305,8 @@ fun CheckpointsState(state: MutableState<State>): State {
     Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
-        NewFileButton("CLASSES",
+        NewFileButton(
+            "CLASSES",
             Modifier.align(Alignment.CenterHorizontally).width(300.dp),
             {
                 Files.gotClasses.value = true
@@ -300,26 +332,6 @@ fun CheckpointsState(state: MutableState<State>): State {
             },
             type = InputFilesType.SPLITS
         )
-
-        Button(
-            onClick = {
-                state.value = State.FINAL
-                finalResOnCl(Files.classes.value.first(), Files.courses.value.first(), Files.splits.value, Files.directory.value)
-                TODO("implement final results (by teams?)")
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-        )
-        {
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Результаты",
-                color = Color.White,
-                fontSize = 20.sp
-            )
-        }
-
-
     }
     return state.value
 
@@ -342,7 +354,7 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
             when (type) {
                 InputFilesType.EVENT -> Files.event.value = files
                 InputFilesType.APPLICATIONS -> Files.applications.value = files
-   InputFilesType.SAVED -> Files.saved.value = files
+                InputFilesType.SAVED -> Files.saved.value = files
                 InputFilesType.COURSES -> Files.courses.value = files
                 InputFilesType.CLASSES -> Files.classes.value = files
                 InputFilesType.SPLITS -> Files.splits.value = files
