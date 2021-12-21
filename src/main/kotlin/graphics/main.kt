@@ -43,8 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import graphics.Files.directory
 import graphics.Files.loadingSaved
 import myDB.recreateCompetition
+import ru.emkn.kotlin.sms.finalResOnCl
 import ru.emkn.kotlin.sms.recreateSavedCompetition
 import ru.emkn.kotlin.sms.startOnCl
 import java.awt.FileDialog
@@ -58,6 +60,8 @@ enum class State {
 object Tables {
 
     var tableCreateParticipant = mutableListOf(mutableListOf(mutableStateOf("")))
+    var tableCreateSplits = mutableListOf(mutableListOf(mutableStateOf("")))
+    var tableCreateDistance = mutableListOf(mutableListOf(mutableStateOf("")))
     var startProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
     var finishProtocolsTable = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
     var splitsType1 = Table(mutableListOf(mutableListOf(mutableStateOf(""))))
@@ -196,7 +200,12 @@ fun ZeroState(state: MutableState<State>): State {
         Button(
             onClick = {
                 state.value = State.FINAL
-                TODO("implement final results (by teams?)")
+                finalResOnCl(
+                    Files.classes.value.first(),
+                    Files.courses.value.first(),
+                    Files.splits.value,
+                    Files.directory.value
+                )
             },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
@@ -213,6 +222,8 @@ fun ZeroState(state: MutableState<State>): State {
             onClick = {
                 state.value = State.LISTS
                 Tables.tableCreateParticipant = participantTableCreate()
+                Tables.tableCreateSplits = splitsTableCreate()
+                Tables.tableCreateDistance = distanceTableCreate()
             },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
@@ -289,7 +300,8 @@ fun CheckpointsState(state: MutableState<State>): State {
     Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
-        NewFileButton("CLASSES",
+        NewFileButton(
+            "CLASSES",
             Modifier.align(Alignment.CenterHorizontally).width(300.dp),
             {
                 Files.gotClasses.value = true
@@ -337,7 +349,7 @@ fun NewFileButton(text: String, modifier: Modifier, onClick: () -> Unit = {}, ty
             when (type) {
                 InputFilesType.EVENT -> Files.event.value = files
                 InputFilesType.APPLICATIONS -> Files.applications.value = files
-   InputFilesType.SAVED -> Files.saved.value = files
+                InputFilesType.SAVED -> Files.saved.value = files
                 InputFilesType.COURSES -> Files.courses.value = files
                 InputFilesType.CLASSES -> Files.classes.value = files
                 InputFilesType.SPLITS -> Files.splits.value = files

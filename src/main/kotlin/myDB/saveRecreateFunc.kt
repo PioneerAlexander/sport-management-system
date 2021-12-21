@@ -10,6 +10,8 @@ fun saveCompetition(competition: Competition) {
     transaction {
         SchemaUtils.create(CompetitionsT)
         SchemaUtils.create(ParticipantsT)
+        CompetitionsT.deleteAll()
+        ParticipantsT.deleteAll()
         CompetitionsT.saveCompetition(competition)
     }
 }
@@ -22,7 +24,7 @@ fun recreateCompetition(): Competition {
     return competition
 }
 
-fun clean(){
+fun clean() {
     Database.connect("jdbc:h2:./myh2file", "org.h2.Driver")
     transaction {
         CompetitionsT.deleteAll()
