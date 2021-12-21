@@ -85,6 +85,7 @@ object Files {
     var gotCourses = mutableStateOf(false)
     var classes = mutableStateOf(listOf<File>())
     var gotClasses = mutableStateOf(false)
+    val madeStartProtocols = mutableStateOf(false)
 }
 
 
@@ -165,6 +166,7 @@ fun ZeroState(state: MutableState<State>): State {
             Button(
                 onClick = {
                     state.value = State.START_PROTOCOLS
+                    Files.madeStartProtocols.value = true
                     if (Files.loadingSaved.value) {
                         recreateSavedCompetition(Files.saved.value.first())
                     } else {
@@ -218,23 +220,26 @@ fun ZeroState(state: MutableState<State>): State {
                 fontSize = 20.sp
             )
         }
-        Button(
-            onClick = {
-                state.value = State.LISTS
-                Tables.tableCreateParticipant = participantTableCreate()
-                Tables.tableCreateSplits = splitsTableCreate()
-                Tables.tableCreateDistance = distanceTableCreate()
-            },
-            modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-        )
-        {
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Списки",
-                color = Color.White,
-                fontSize = 20.sp
+        if(Files.gotCourses.value && Files.gotSplits.value &&
+                Files.gotClasses.value && Files.madeStartProtocols.value){
+            Button(
+                onClick = {
+                    state.value = State.LISTS
+                    Tables.tableCreateParticipant = participantTableCreate()
+                    Tables.tableCreateSplits = splitsTableCreate()
+                    Tables.tableCreateDistance = distanceTableCreate()
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
             )
+            {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = "Списки",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+            }
         }
     }
     Row(modifier = Modifier.fillMaxHeight())
