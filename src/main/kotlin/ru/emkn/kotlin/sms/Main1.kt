@@ -21,11 +21,12 @@ fun checkMapElement(string: String?): String {
     return string.toString()
 }
 
-fun startOnCl(eventFile: File, applications: List<File>, folder: String) {
+fun startOnCl(eventFile: File, applications: List<File>, folder: String): List<List<String>> {
     val competition = makeCompetition(eventFile, folder, applications)
-    createStartProtocols(folder, competition)
     saveCompetition(folder, competition)
     myDB.saveCompetition(competition)
+    return createStartProtocols(folder, competition)
+
 }
 
 fun tillSplitsInputOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
@@ -37,10 +38,16 @@ fun tillSplitsInputOnCl(classesFile: File, coursesFile: File, splitsFiles: List<
     }
 }
 
-fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
-    val competition = recreateSavedCompetition(recreateFile)
+fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String): List<List<String>> {
+    Input.coursesFile = coursesFile
+    Input.splitsFiles = splitsFiles
+    Input.classesFile = classesFile
+    Input.splitsMap = splitsInputNew(Input.splitsFiles).mapValues {
+        it.value.list.map { MutableSplit(it.name, it.time) }.toMutableList()
+    }
+    val competition = myDB.recreateCompetition()
     generateResults(competition, folder)
-    generateTeamResults(competition, folder)
+    return generateTeamResults(competition, folder)
 }
 
 
