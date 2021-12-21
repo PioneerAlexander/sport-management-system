@@ -13,6 +13,7 @@ class Input {
         var classesFile: File = File("") // Path to csv file
         var coursesFile: File = File("")
         var splitsFiles: List<File> = listOf()
+        var splitsMap: Map<String, MutableList<MutableSplit>> = mapOf()
     }
 }
 

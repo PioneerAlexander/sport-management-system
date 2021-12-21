@@ -33,7 +33,7 @@ fun tillSplitsInputOnCl(classesFile: File, coursesFile: File, splitsFiles: List<
     Input.coursesFile = coursesFile
     Input.splitsFiles = splitsFiles
     Input.classesFile = classesFile
-    Input.splitsMap = splitsInputNew(Input.splitsFiles).mapValues {
+    Input.splitsMap  = splitsInputNew(Input.splitsFiles).mapValues {
         it.value.list.map { MutableSplit(it.name, it.time) }.toMutableList()
     }
 }

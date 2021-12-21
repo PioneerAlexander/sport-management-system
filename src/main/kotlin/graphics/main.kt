@@ -69,6 +69,8 @@ object Tables {
 
 object Files {
     var directory = mutableStateOf("")
+    var isStartProtMade = mutableStateOf(true)
+    var startList = mutableStateOf(listOf(listOf<String>()))
     var gotDirectory = mutableStateOf(false)
     var event = mutableStateOf(listOf<File>())
     var gotEvent = mutableStateOf(false)
@@ -98,11 +100,12 @@ fun main() = application {
     {
         //Table(mutableListOf(mutableListOf(mutableStateOf("")))).show()
         windowState.value = when (windowState.value) {
+            State.DOCS -> PrintDock(windowState)
             State.ZERO -> ZeroState(windowState)
             State.IMPORT -> ImportState(windowState)
             State.LISTS -> ListsState(windowState)
             State.CHECKPOINTS -> CheckpointsState(windowState)
-            State.START_PROTOCOLS -> StartPr(windowState, startOnCl(Files.event.value.first(), Files.applications.value, Files.directory.value))
+            State.START_PROTOCOLS -> StartPr(windowState, Files.startList.value)
             else -> ZeroState(windowState)
         }
     }
@@ -222,49 +225,6 @@ fun ZeroState(state: MutableState<State>): State {
     }
 
     return state.value
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun ImportState(state: MutableState<State>): State {
-    Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
-    Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-
-        TextField(
-            modifier = Modifier.onPreviewKeyEvent {
-                (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
-            }.align(Alignment.CenterHorizontally),
-            value = Files.directory.value,
-            onValueChange = { Files.directory.value = it },
-            placeholder = { Text("Имя папки для сохранения.") }
-        )
-        NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp), {
-            Files.gotEvent.value = true
-        }, type = InputFilesType.EVENT)
-        NewFileButton(
-            "Все файлы заявок",
-            Modifier.align(Alignment.CenterHorizontally).width(300.dp),
-            {
-                Files.gotApplications.value = true
-            },
-            type = InputFilesType.APPLICATIONS
-        )
-        if (Files.loadingSaved.value || (Files.gotApplications.value && Files.gotEvent.value)) {
-            Button(
-                onClick = { state.value = State.START_PROTOCOLS },
-                modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
-            ) {
-                Text(
-                    text = "Стартовые протоколы",
-                    color = Color.White,
-                    fontSize = 20.sp
-                )
-            }
-        }
-    }
-    return state.value
-
 }
 
 
