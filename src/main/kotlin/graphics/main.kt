@@ -45,6 +45,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import graphics.Files.loadingSaved
 import myDB.recreateCompetition
+import ru.emkn.kotlin.sms.finalResOnCl
 import ru.emkn.kotlin.sms.recreateSavedCompetition
 import ru.emkn.kotlin.sms.startOnCl
 import java.awt.FileDialog
@@ -101,6 +102,7 @@ fun main() = application {
             State.IMPORT -> ImportState(windowState)
             State.LISTS -> ListsState(windowState)
             State.CHECKPOINTS -> CheckpointsState(windowState)
+            State.START_PROTOCOLS -> StartPr(windowState, startOnCl(Files.event.value.first(), Files.applications.value, Files.directory.value))
             else -> ZeroState(windowState)
         }
     }
@@ -164,7 +166,7 @@ fun ZeroState(state: MutableState<State>): State {
                     if (Files.loadingSaved.value) {
                         recreateSavedCompetition(Files.saved.value.first())
                     } else {
-                        startOnCl(Files.event.value.first(), Files.applications.value, Files.directory.value)
+
                     }
                     //TODO("Генерация стартовых протоколов")
                 },
@@ -196,6 +198,7 @@ fun ZeroState(state: MutableState<State>): State {
         Button(
             onClick = {
                 state.value = State.FINAL
+                finalResOnCl(Files.classes.value.first(), Files.courses.value.first(), Files.splits.value, Files.directory.value)
                 TODO("implement final results (by teams?)")
             },
             modifier = Modifier.align(Alignment.CenterHorizontally).width(300.dp).height(60.dp),
