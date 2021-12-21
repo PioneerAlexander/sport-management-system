@@ -37,7 +37,13 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import ru.emkn.kotlin.sms.startOnCl
 import androidx.compose.foundation.HorizontalScrollbar as HorizontalScrollbar
+
+
+enum class WhereToSave{
+    DISTANCE,SPLITS,NOWHERE
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 
@@ -45,7 +51,7 @@ class Table(val composeTable: MutableList<MutableList<MutableState<String>>>) {
     val composeTableSize = mutableStateOf(composeTable.size)
 
     @Composable
-    fun show(mutable: Boolean = true) {
+    fun show(mutable: Boolean = true, SaveOnSave: WhereToSave = WhereToSave.NOWHERE) {
         Box(
             modifier = Modifier.fillMaxSize()
                 .background(color = Color(251, 206, 177))
@@ -99,8 +105,14 @@ class Table(val composeTable: MutableList<MutableList<MutableState<String>>>) {
                                     composeTableSize.value -= 1
                                 }
                             }
-                        } else SaveButton {
-                            //переход к какому-то другому окну, функции, запуск программы дальше
+                        } else {
+                            SaveButton {
+                                when(SaveOnSave){
+                                    //WhereToSave.DISTANCE -> smth =  this@Table.composeTable
+                                    //WhereToSave.SPLITS -> smth =  this@Table.composeTable
+                                    else ->{}
+                                }
+                            }
                         }
                     }
                 }
