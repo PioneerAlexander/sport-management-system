@@ -6,25 +6,17 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.rounded.AccountBox
-import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.rounded.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
-import myDB.CompetitionsT
-import myDB.ParticipantsT
-import myDB.recreateCompetition
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import ru.emkn.kotlin.sms.*
+import java.time.LocalTime
 
 enum class TabState {
     GROUPS, PARTICIPANTS, DISTANCES, TEAMS, NOTEOFPARTICIPANTS
@@ -46,7 +38,6 @@ fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
             mutableStateOf("second")
         )
     )
-    logger.info { "Вы здесь" }
     compeTition.participants.forEach {
         participantList.add(
             mutableListOf(
@@ -63,14 +54,13 @@ fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
             )
         )
     }
-    logger.info { "После" }
     return participantList
 }
 
 fun splitsTableCreate(): MutableList<MutableList<MutableState<String>>> {
     var interiorList = mutableListOf(mutableStateOf("number"))
     val splitCopy = Input.splitsMap
-    val splitsMaxSize = (splitCopy.values.map { it.size }).maxOrNull() ?: throw Exception("bitch")
+    val splitsMaxSize = (splitCopy.values.map { it.size }).maxOrNull() ?: throw Exception("empty splits")
     for (i in 1..splitsMaxSize!!) {
         interiorList.add(mutableStateOf("name $i"))
         interiorList.add(mutableStateOf("time $i"))
@@ -86,6 +76,22 @@ fun splitsTableCreate(): MutableList<MutableList<MutableState<String>>> {
         splitsList.add(interiorList)
     }
     return splitsList
+}
+
+fun createSplitsMapFromTable() {
+    val mapSplits = mutableMapOf<String, MutableList<MutableSplit>>()
+    for (line in Tables.tableCreateSplits) {
+        if (line[0].value != "number") {
+            val key = line[0].value
+            val valueMap = mutableListOf<MutableSplit>()
+            for (i in 1 until line.size step 2) {
+                val splittedTime = line[i + 1].value.split(":").map { it.toInt() }
+                valueMap.add(MutableSplit(line[i].value, LocalTime.of(splittedTime[0], splittedTime[1], splittedTime[2])))
+            }
+            mapSplits[key] = valueMap
+        }
+    }
+    Input.splitsMap = mapSplits
 }
 
 fun distanceTableCreate(): MutableList<MutableList<MutableState<String>>> {
@@ -107,16 +113,14 @@ fun distanceTableCreate(): MutableList<MutableList<MutableState<String>>> {
 @Composable
 fun ListsState(state: MutableState<State>): State {
     val tabs =
-        listOf(//Icons.Rounded.ArrowBack to State.ZERO,
-            Icons.Rounded.List to TabState.DISTANCES,
+        listOf(
             Icons.Default.Home to State.ZERO,
+            Icons.Rounded.List to TabState.DISTANCES,
             Icons.Filled.Person to TabState.PARTICIPANTS,
-            Icons.Rounded.AccountBox to TabState.GROUPS,
-            Icons.Rounded.AddCircle to TabState.TEAMS,
-            Icons.Rounded.FavoriteBorder to TabState.NOTEOFPARTICIPANTS
+            Icons.Default.ShoppingCart to TabState.NOTEOFPARTICIPANTS
         )
 
-    val tabState = remember { mutableStateOf(0) }
+    val tabState = remember { mutableStateOf(1) }
     Column {
         TabRow(selectedTabIndex = tabState.value, divider = {}, modifier = Modifier.height(50.dp)) {
             tabs.withIndex().forEach() { (index, tab) ->
@@ -126,18 +130,15 @@ fun ListsState(state: MutableState<State>): State {
                     onClick = {
                         tabState.value = index
                     })
-                logger.info { "тут" }
-
             }
         }
         when (tabState.value) {
-            0 -> Table(Tables.tableCreateDistance).show(false)
-            1 -> state.value = State.ZERO
+            0 -> state.value = State.ZERO
+            1 -> Table(Tables.tableCreateDistance).show(false)
             2 -> {
-                logger.info { "uq" }
                 Table(Tables.tableCreateParticipant).show(false)
             }
-            5 -> {
+            3 -> {
                 Table(Tables.tableCreateSplits).show(SaveOnSave = WhereToSave.SPLITS)
             }
             else -> {

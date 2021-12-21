@@ -4,8 +4,6 @@ import java.time.LocalTime
 import kotlin.test.*
 
 internal class TestOfInput {
-
-
     @Test
     fun testGetSportClasses() {
         val actual = getSportClasses(File("src/test/resources/test1_classes.csv"))

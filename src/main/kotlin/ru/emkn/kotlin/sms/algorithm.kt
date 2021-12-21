@@ -1,5 +1,6 @@
 package ru.emkn.kotlin.sms
 
+import graphics.compeTition
 import mu.KotlinLogging
 import java.io.File
 
@@ -25,17 +26,9 @@ fun startOnCl(eventFile: File, applications: List<File>, folder: String): List<L
     val competition = makeCompetition(eventFile, folder, applications)
     saveCompetition(folder, competition)
     myDB.saveCompetition(competition)
+    compeTition = competition
     return createStartProtocols(folder, competition)
 
-}
-
-fun tillSplitsInputOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String, recreateFile: File) {
-    Input.coursesFile = coursesFile
-    Input.splitsFiles = splitsFiles
-    Input.classesFile = classesFile
-    Input.splitsMap  = splitsInputNew(Input.splitsFiles).mapValues {
-        it.value.list.map { MutableSplit(it.name, it.time) }.toMutableList()
-    }
 }
 
 fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, folder: String): List<List<String>> {
@@ -45,7 +38,7 @@ fun finalResOnCl(classesFile: File, coursesFile: File, splitsFiles: List<File>, 
     Input.splitsMap = splitsInputNew(Input.splitsFiles).mapValues {
         it.value.list.map { MutableSplit(it.name, it.time) }.toMutableList()
     }
-    val competition = myDB.recreateCompetition()
+    val competition = compeTition
     generateResults(competition, folder)
     return generateTeamResults(competition, folder)
 }

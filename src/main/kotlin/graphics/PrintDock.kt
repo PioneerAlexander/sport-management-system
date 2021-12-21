@@ -1,0 +1,147 @@
+package graphics
+
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+
+@OptIn(ExperimentalComposeUiApi::class)
+
+@Composable
+fun PrintDock(state: MutableState<State>): State {
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .background(color = Color.White)
+            .padding(10.dp)
+    ) {
+        val stateVertical = rememberScrollState(0)
+        val stateHorizontal = rememberScrollState(0)
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(stateVertical)
+                .padding(end = 12.dp, bottom = 12.dp)
+                .horizontalScroll(stateHorizontal)
+        ) {
+            Column {
+                Text(text = "# Электронная система проведения соревнований\n" +
+                        "\n" +
+                        "# Использование программы\n" +
+                        "\n" +
+                        "Есть два сценария работы с программой:\n" +
+                        "* Обработка заявок и создание стартовых протоколов\n" +
+                        "* Генерация результатов соревнований по данным о прохождении контрольных точек. Последнее \n" +
+                        "можно использовать только после\n" +
+                        "  создания соответствующего протокола старта\n" +
+                        "\n" +
+                        "# Немного о формате файлов\n" +
+                        "\n" +
+                        "* Пример файла соревнования (CSV):\n" +
+                        "\n" +
+                        "    ```csv\n" +
+                        "    Название,Дата\n" +
+                        "    Первенство пятой бани,01.01.2022\n" +
+                        "    ```\n" +
+                        "\n" +
+                        "* Пример заявочного списка (CSV):\n" +
+                        "\n" +
+                        "    ```csv\n" +
+                        "    Выборгский СДЮШСОР №10,,,,,,,\n" +
+                        "    Группа,Фамилия,Имя,Г.р.,Разр.\n" +
+                        "    Иванов,Иван,2002,КМС,М21,,,\n" +
+                        "    Петров,Пётр,1978,I,М40,,,  \n" +
+                        "    Пупкин,Василий,2011,3ю,М10,,\n" +
+                        "    ```\n" +
+                        "\n" +
+                        "* Пример протокола прохождения дистанции участником (CSV):\n" +
+                        "\n" +
+                        "    ```csv\n" +
+                        "    Participant,243,\n" +
+                        "    1km,12:06:15\n" +
+                        "    2km,12:10:36\n" +
+                        "    Finish,12:14:51\n" +
+                        "    ```\n" +
+                        "\n" +
+                        "* Пример протокола прохождения контрольного пункта (CSV):\n" +
+                        "\n" +
+                        "    ```csv\n" +
+                        "    Checkpoint,1km,\n" +
+                        "    241,12:04:17\n" +
+                        "    242,12:05:11\n" +
+                        "    243,12:06:15\n" +
+                        "    ```\n" +
+                        "\n" +
+                        "* Пример протокола соответствия категорий маршрутам (CSV):\n" +
+                        "\n" +
+                        "    ```csv\n" +
+                        "    Название,Дистанция\n" +
+                        "    М10,МЖ9 10\n" +
+                        "    М12,М12\n" +
+                        "    М14,М14\n" +
+                        "    М16,М16 Ж60\n" +
+                        "    ```\n" +
+                        "* Пример протокола маршрутов (CSV) - последняя контрольная точка считается финишем:\n" +
+                        "\n" +
+                        "    ```csv\n" +
+                        "    Название,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25\n" +
+                        "    МЖ9 10,32,46,34,33,ЛюбоеСлово,,,,,,,,,,,,,,,,,,,,\n" +
+                        "    Ж14,47,46,45,34,33,32,48,52,51,50,49,53,,,,,,,,,,,,,\n" +
+                        "    Ж12,32,46,33,47,48,52,51,50,49,53,,,,,,,,,,,,,,,\n" +
+                        "    М12,32,46,34,35,45,33,47,48,52,49,53,,,,,,,,,,,,,,\n" +
+                        "    SUPER,21,!w22 w23,~2 24t 25t 26t 27t 28t,29,,,,,,,,,,,,,,,,,,,,,\n" +
+                        "    ```\n" +
+                        "Синтаксис для задачи дистанций:\n" +
+                        "* В названиях контрольных пунктов нельзя использовать восклицательный знак(!), тильду(~),\n" +
+                        " запятую(,), пробел( ).\n" +
+                        "* Блоки маршрута отделяются друг от друга запятыми и должны проходиться именно \nв написанном порядке.\n" +
+                        "* Блок состоящий из одного названия контрольного пункта (,10, или ,ЛюбоеСлово,) значит, что \nучастник должен посетить этот контрольный пункт.\n" +
+                        "* Блок состоящий из восклицательного знака(!) за которым идут через пробел названия\n контрольных пунктов значит, что участник должен посетить ровно один из указанных пунктов на выбор \n(,!w22 w23, значит можно на выбор посетить либо w22, либо w22)\n" +
+                        "* Блок состоящий из тильды(~) за которой идет натуральное число, а далее через пробел названия\n контрольных пунктов значит, что участник должен посетить ровно указанное число различных записанных \nпунктов на выбор в любом порядке\n(,~2 24t 25t 26t 27t 28t, значит, что подходят любые два пункта \nв любом порядке на выбор участника, к примеру (25t потом 27t) или (27t потом 25t), или (24t потом 28t).\n" +
+                        "\n" +
+                        "Желаем вам успешного использования программы. Читайте сообщения об ошибках -\n в них кроется информация о том, что именно пошло не так в ходе работы с вашими данными.\n" +
+                        "Возможно, их потребуется поменять для корректной работы программы.\n",
+                        color = Color(100, 0, 100),
+                        fontSize = 16.sp
+
+                )
+
+            }
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd)
+                .fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(stateVertical)
+        )
+        HorizontalScrollbar(
+            modifier = Modifier.align(Alignment.BottomStart)
+                .fillMaxWidth()
+                .padding(end = 12.dp),
+            adapter = rememberScrollbarAdapter(stateHorizontal)
+        )
+        IconButton(onClick = { state.value = State.ZERO }, modifier = Modifier.align(Alignment.TopEnd).offset ((-10).dp, 0.dp )) {
+            Icon(Icons.Default.ArrowBack, "")
+        }
+
+    }
+
+    return state.value
+}
+
+
+

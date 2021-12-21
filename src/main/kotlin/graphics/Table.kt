@@ -3,15 +3,7 @@ package graphics
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
@@ -37,12 +29,13 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import ru.emkn.kotlin.sms.Input
 import ru.emkn.kotlin.sms.startOnCl
 import androidx.compose.foundation.HorizontalScrollbar as HorizontalScrollbar
 
 
-enum class WhereToSave{
-    DISTANCE,SPLITS,NOWHERE
+enum class WhereToSave {
+    SPLITS, NOWHERE
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -67,56 +60,62 @@ class Table(val composeTable: MutableList<MutableList<MutableState<String>>>) {
                     .padding(end = 12.dp, bottom = 12.dp)
                     .horizontalScroll(stateHorizontal).align(Alignment.Center)
             ) {
-            Column(
-                modifier = Modifier.align(Alignment.TopCenter),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                repeat(composeTableSize.value) { index ->
+                Column(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    repeat(composeTableSize.value) { index ->
 
-                    val readOnly = if (mutable) index == 0 else true
-                    Row(
-                        modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        for ((rowIndex, field) in composeTable[index].withIndex()) {
-                            TextField(
-                                modifier = Modifier.onPreviewKeyEvent {
-                                    (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
-                                }.width(150.dp),
-                                value = field.value,
-                                onValueChange = {
-                                    composeTable[index][rowIndex].value = it
-                                },
-                                placeholder = { Text("Значение.") },
-                                readOnly = readOnly,
-                                singleLine = true
-                            )
-                        }
-                        AddButton {
-                            if (mutable) {
-                                composeTable.add(index + 1, MutableList(composeTable[0].size) { mutableStateOf("") })
-                                composeTableSize.value += 1
+                        val readOnly = if (mutable) index == 0 else true
+                        Row(
+                            modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            for ((rowIndex, field) in composeTable[index].withIndex()) {
+                                TextField(
+                                    modifier = Modifier.onPreviewKeyEvent {
+                                        (it.key == Key.Enter)         // чтобы нельзя было перенести строку при вводе
+                                    }.width(150.dp),
+                                    value = field.value,
+                                    onValueChange = {
+                                        composeTable[index][rowIndex].value = it
+                                    },
+                                    placeholder = { Text("Значение.") },
+                                    readOnly = readOnly,
+                                    singleLine = true
+                                )
                             }
-                        }
-                        if (index != 0) {
-                            DeleteButton {
+                            AddButton {
                                 if (mutable) {
-                                    composeTable.removeAt(index)
-                                    composeTableSize.value -= 1
+                                    composeTable.add(
+                                        index + 1,
+                                        MutableList(composeTable[0].size) { mutableStateOf("") })
+                                    composeTableSize.value += 1
                                 }
                             }
-                        } else {
-                            SaveButton {
-                                when(SaveOnSave){
-                                    //WhereToSave.DISTANCE -> smth =  this@Table.composeTable
-                                    //WhereToSave.SPLITS -> smth =  this@Table.composeTable
-                                    else ->{}
+                            if (index != 0) {
+                                DeleteButton {
+                                    if (mutable) {
+                                        composeTable.removeAt(index)
+                                        composeTableSize.value -= 1
+                                    }
+                                }
+                            } else {
+                                SaveButton {
+                                    when (SaveOnSave) {
+                                        WhereToSave.SPLITS -> {
+                                            Tables.tableCreateSplits = this@Table.composeTable
+                                            createSplitsMapFromTable()
+                                        }
+
+                                        else -> {
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
             }
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd)
