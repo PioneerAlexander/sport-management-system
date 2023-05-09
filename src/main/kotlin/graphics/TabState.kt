@@ -22,7 +22,7 @@ enum class TabState {
     GROUPS, PARTICIPANTS, DISTANCES, TEAMS, NOTEOFPARTICIPANTS
 }
 
-lateinit var compeTition: Competition
+lateinit var mainCompetition: Competition
 
 fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
     val participantList = mutableListOf(
@@ -38,7 +38,7 @@ fun participantTableCreate(): MutableList<MutableList<MutableState<String>>> {
             mutableStateOf("second")
         )
     )
-    compeTition.participants.forEach {
+    mainCompetition.participants.forEach {
         participantList.add(
             mutableListOf(
                 mutableStateOf(it.name),

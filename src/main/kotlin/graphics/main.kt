@@ -17,9 +17,9 @@ fun main() = application {
     val windowState = remember { mutableStateOf(State.ZERO) }
     Window(
         onCloseRequest = ::exitApplication,
-        title = "ЭСПСС (Электронная система проведения спортивных соревнований)",
+        title = "Electronic Competition Management System",
         state = rememberWindowState(width = 850.dp, height = 600.dp),
-        icon = BitmapPainter(useResource("Bragilevsky2.ico", ::loadImageBitmap)), //своя иконка
+        icon = BitmapPainter(useResource("Bragilevsky2.ico", ::loadImageBitmap)), //app icon
         resizable = true,
     )
     {

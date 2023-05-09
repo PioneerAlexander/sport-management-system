@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CheckpointsState(state: MutableState<State>): State {
-    Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
+    Button(onClick = { state.value = State.ZERO }) { Text(text = "Back", color = Color.White) }
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
         NewFileButton(

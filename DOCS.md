@@ -1,113 +1,118 @@
-# Электронная система проведения соревнований
+# Electronic Competition Management System
 
-## Использование программы
+## Program Usage
 
-Есть два сценария работы с программой:
-* Обработка заявок и создание стартовых протоколов
-* Генерация результатов соревнований по данным о прохождении контрольных точек. Последнее можно использовать только после
-  создания соответствующего протокола старта
-#### Что будет происходить
+There are two scenarios for using the program:
 
-* При запуске стартового сценария будут созданы протоколы старта для групп, они будут находиться в папке `startProtocols`.
+* Processing applications and creating starting protocols
+* Generating competition results based on data from checkpoints. The latter can only be used after
+  creating the corresponding start protocol.
 
-* Финальный сценарий создает файл `results.csv`, в котором будут общие результаты по всем возрастным группам. Также будет создан файл `teamResults.csv` с результатами команд.
+#### What will happen
 
-Программу можно запустить как через аргументы командной строки, так и используя продвинутый графический интерфейс.
+* When the start scenario is launched, start protocols will be created for the groups and will be
+  located in the `startProtocols` folder.
 
- ###Через аргументы командной строки:
-Запуск происходит из файла **algorithm.kt**
+* The final scenario creates a `results.csv` file, which will contain the overall results for all
+  age
+  groups. A `teamResults.csv` file with team results will also be created.
 
-Для запуска стартового сценария аргументы командной строки должны быть следующие (и именно в этом порядке):
+The program can be launched using either command-line arguments or an advanced graphical interface.
 
-| Аргумент 1      | Аргумент 2 |Аргумент 3 |Аргумент 4 |
-| :-----------: | :-----------: |:-----------: | :-----------: |
-|  `start`      | `event.csv` |`applications` |`folder` |
-|        | путь к файлу соревнования |папка с заявками | название папки для хранения данных - стартовых протоколов, данных, необходимых для дальнейшей генерации финальных результатов |
+### Via command-line arguments:
 
-Для финального сценария:
+Launch the program from the **algorithm.kt** file.
 
-| Аргумент 1  |                    Аргумент 2                     |     Аргумент 3     |                                 Аргумент 4                                 | Аргумент 5<br/> |
-| :-----------:  |:-------------------------------------------------:|:------------------:|:--------------------------------------------------------------------------:|:----------:|
-|  `finish`        |                   `classes.csv`                   |   `courses.csv`    |                                `splits.csv`                                |  `folder`  | |
-|       | протокол соответствия возрастной группы дистанции | маршруты дистанций | данные прохождения контрольных точек | директория из предыдущего запуска программы (вы же не забыли его сделать?) |
+To launch the start scenario, the command-line arguments must be as follows (and in this order):
 
+| Argument 1 |       Argument 2       |         Argument 3          |                   Argument 4                    |
+|:----------:|:----------------------:|:---------------------------:|:-----------------------------------------------:|
+|  `start`   |      `event.csv`       |       `applications`        |                    `folder`                     |
+|            | path to the event file | directory with applications | folder name for storing final results protocols |
 
-###Что происходит в графическом интерфейсе:
+For the final scenario:
 
-####При запуске программы открывается стартовое окно: 
-![img.png](img.png)
+| Argument 1 |                     Argument 2                     |  Argument 3   |         Argument 4          |                                 Аргумент 5<br/>                                  |
+|:----------:|:--------------------------------------------------:|:-------------:|:---------------------------:|:--------------------------------------------------------------------------------:|
+|  `finish`  |                   `classes.csv`                    | `courses.csv` |        `splits.csv`         |                                     `folder`                                     | |
+|            | age group correspondence protocol for the distance | course routes | data on passing checkpoints | directory from the previous program run (you didn't forget to make it, did you?) |
 
-Кнопка **"Документация"** покажет вам документацию для графического 
-интерфейса
+### What happens in graphical interface:
 
-Кнопка **"Результаты"** до введения всех данных будет выдавать ошибку, поскольку
-не из чего их получить.
-Чтобы передать стартовые данные в программу и пройти первый этап ее работы,
-вам потребуется нажать на кнопку **"Создать/загрузить"**
+#### When the program is launched, a startup window will appear.
 
-####После нажатия данной кнопки появляется новое состояние окна - **ImportState** в коде программы.  
+The **"Documentation"** button will show you the documentation for the graphical interface on the
+russian language.
+
+The **"Results"** button will give an error until all the necessary data has been entered, as there
+will
+be no data to generate results from. To pass the starting data to the program and proceed to the
+first stage of its work, you need to click the **"Create/Load"** button.
+
+After clicking this button, the window enters a new state - **ImportState** in the program code.
 ![img_1.png](img_1.png)
 
-Кнопка **"назад"** возвращает на исходное состояние экрана.
+The **"Back"** button returns the screen to its original state.
 
-_В текстовом поле_ введите название папки, в которую будет
-происходить сохранение стартовых протоколов.
+_In the text field_, enter the name of the folder where the start protocols will be saved.
 
-При нажатии кнопки **"Файл соревнования"** открывается диалоговое окно,
-где вы можете выбрать CSV-файл с соревнованием (как он выглядит, можете
-посмотреть ниже в разделе "О формате файлов".) 
+Clicking the **"Competition file"** button opens a dialog box where you can select the CSV file with
+the
+competition data (you can see what it looks like below in the "About file formats" section).
 
-При нажатии кнопки **"Все файлы заявок"** открывается диалоговое окно,
-где вам нужно выбрать CSV-файлы - заявки участников (как они выглядят, можете
-посмотреть ниже в разделе "О формате файлов".)
+Clicking the **"All registration files"** button opens a dialog box where you need to select the CSV
+files - the participant registration files (you can see what they look like below in the "About file
+formats" section).
+
 ![img_2.png](img_2.png)
 
-После занесения всех данных не спешите выходить с этого окна - через
-некоторое время сгенерируются стартовые протоколы и появится кнопка
-**"Стартовые протоколы"**, и можно на них посмотреть прямо в программе!
+After entering all the data, do not rush to exit this window - after
+some time, the starting protocols will be generated and the button
+"Starting protocols" will appear, and you can view them right in the program!
 ![img_3.png](img_3.png)
 
-####Второй этап программы. Загрузка файлов для генерации результатов
+#### Second stage of the program. Uploading files for result generation
 
-При нажатии на кнопку **"Данные соревнования"** открывается новое состояние окна:
+When you click the button "Competition data", a new window state opens:
 
 ![img_4.png](img_4.png)
-При нажатии соответствующих фото загрузите через диалоговое окно 
-необходимые файлы:
+When you click on the corresponding photo, upload the necessary files
+through the dialog box:
 
-**classes.csv** -> протокол соответствия возрастной группы дистанции
-**courses.csv** -> маршруты дистанций
-**splits.csv** -> данные прохождения контрольных точек
+**classes.csv** -> protocol for matching the age group with the distance
+**courses.csv** -> routes of distances
+**splits.csv** -> data on passing control points
 
-Вернитесь назад. При нажатии кнопки **Результаты** вы можете посмотреть на 
-полученные результаты соревнования!
+Go back. When you click on the "Results" button, you can view the
+results of the competition!
 
-####Списки
-Также вы можете по кнопке списки посмотреть на таблицы дистанций, участников
-и данные прохождения участниками контрольных пунктов, реализованные с помощью 
-переключающихся вкладок!
+#### Lists
 
-Дистанции: ![img_5.png](img_5.png) - менять их в данной версии проекта нельзя.
+Also, by clicking on the Lists button, you can view the tables of distances, participants,
+and data on passing control points by participants, implemented using
+switchable tabs!
 
-Участники: ![img_6.png](img_6.png) - менять их в данной версии проекта нельзя.
+Distances: ![img_5.png](img_5.png) - you cannot change them in this version of the project.
 
-Данный прохождения участниками контрольных пунктов: ![img_7.png](img_7.png) - 
-их можно редактировать!
-Можно изменить информацию об участнике, при нажатии на **+**  
-добавить еще одно прохождение участником контрольных 
-пунктов! Главное, чтобы и другая информация о нем была добавлена. Кроме того, можно удалить
-строчку. Нажмите галочку, и все изменения будут сохранены!
+Participants: ![img_6.png](img_6.png) - you cannot change them in this version of the project.
 
-### Немного о формате файлов
+Data on passing control points by participants: ![img_7.png](img_7.png) -
+you can edit them!
+You can change information about the participant, by clicking on the **+**
+add another passing of control points by the participant! The main thing is that other information
+about them is added. In addition, you can delete
+a row. Click the checkmark, and all changes will be saved!
 
-* Пример файла соревнования (CSV):
+### Shortly about file format
+
+* Example of the competition file (CSV):
 
     ```csv
     Название,Дата
     Первенство пятой бани,01.01.2022
     ```
 
-* Пример заявочного списка (CSV):
+* Example of the application file (CSV):
 
     ```csv
     Выборгский СДЮШСОР №10,,,,,,,
@@ -117,7 +122,7 @@ _В текстовом поле_ введите название папки, в 
     Пупкин,Василий,2011,3ю,М10,,
     ```
 
-* Пример протокола прохождения дистанции участником (CSV):
+* An example of the protocol of the course participant (CSV):
 
     ```csv
     Participant,243,
@@ -126,7 +131,7 @@ _В текстовом поле_ введите название папки, в 
     Finish,12:14:51
     ```
 
-* Пример протокола прохождения контрольного пункта (CSV):
+* Example of a checkpoint protocol (CSV):
 
     ```csv
     Checkpoint,1km,
@@ -135,7 +140,7 @@ _В текстовом поле_ введите название папки, в 
     243,12:06:15
     ```
 
-* Пример протокола соответствия категорий маршрутам (CSV):
+* Example of a route category matching protocol (CSV):
 
     ```csv
     Название,Дистанция
@@ -144,7 +149,7 @@ _В текстовом поле_ введите название папки, в 
     М14,М14
     М16,М16 Ж60
     ```
-* Пример протокола маршрутов (CSV) - последняя контрольная точка считается финишем:
+* Example of route protocol (CSV) - the last check point is considered the finish point :
 
     ```csv
     Название,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25
@@ -154,12 +159,24 @@ _В текстовом поле_ введите название папки, в 
     М12,32,46,34,35,45,33,47,48,52,49,53,,,,,,,,,,,,,,
     SUPER,21,!w22 w23,~2 24t 25t 26t 27t 28t,29,,,,,,,,,,,,,,,,,,,,,
     ```
-Синтаксис для задачи дистанций:
-* В названиях контрольных пунктов нельзя использовать восклицательный знак(!), тильду(~), запятую(,), пробел( ).
-* Блоки маршрута отделяются друг от друга запятыми и должны проходиться именно в написанном порядке.
-* Блок состоящий из одного названия контрольного пункта (,10, или ,ЛюбоеСлово,) значит, что участник должен посетить этот контрольный пункт.
-* Блок состоящий из восклицательного знака(!) за которым идут через пробел названия контрольных пунктов значит, что участник должен посетить ровно один из указанных пунктов на выбор (,!w22 w23, значит можно на выбор посетить либо w22, либо w22)
-* Блок состоящий из тильды(~) за которой идет натуральное число, а далее через пробел названия контрольных пунктов значит, что участник должен посетить ровно указанное число различных записанных пунктов на выбор в любом порядке(,~2 24t 25t 26t 27t 28t, значит, что подходят любые два пункта в любом порядке на выбор участника, к примеру (25t потом 27t) или (27t потом 25t), или (24t потом 28t).
 
-Желаем вам успешного использования программы. Читайте сообщения об ошибках - в них кроется информация о том, что именно пошло не так в ходе работы с вашими данными.
-Возможно, их потребуется поменять для корректной работы программы.
+Syntax for the distance task:
+
+* Exclamation mark (!), tilde (~), comma (,), and space ( ) cannot be used in the names of control
+  points.
+* Blocks of the route are separated by commas and must be passed in the order written.
+* A block consisting of a single control point name (,10, or ,AnyWord,) means that the participant
+  must visit that control point.
+* A block consisting of an exclamation mark (!) followed by the names of control points separated by
+  spaces means that the participant must visit exactly one of the specified points of choice (,!w22
+  w23, means that you can visit either w22 or w23).
+* A block consisting of a tilde (~) followed by a natural number, and then the names of control
+  points
+  separated by spaces, means that the participant must visit exactly the specified number of
+  different
+  points in any order (,~2 24t 25t 26t 27t 28t, means that any two points in any order are suitable
+  for the participant, for example (25t then 27t) or (27t then 25t), or (24t then 28t)).
+
+We wish you successful use of the program. Read error messages - they contain information about what
+went wrong while working with your data. You may need to change them for the program to work
+correctly.

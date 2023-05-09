@@ -25,7 +25,7 @@ fun ZeroState(state: MutableState<State>): State {
         {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Документация",
+                text = "Documentation",
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -38,7 +38,7 @@ fun ZeroState(state: MutableState<State>): State {
         {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Создать/загрузить",
+                text = "Create / upload",
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -53,7 +53,7 @@ fun ZeroState(state: MutableState<State>): State {
         {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Данные соревнования",
+                text = "Competition data",
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -74,7 +74,7 @@ fun ZeroState(state: MutableState<State>): State {
         {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
-                text = "Результаты",
+                text = "Results",
                 color = Color.White,
                 fontSize = 20.sp
             )
@@ -95,7 +95,7 @@ fun ZeroState(state: MutableState<State>): State {
             {
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Списки",
+                    text = "Lists",
                     color = Color.White,
                     fontSize = 20.sp
                 )

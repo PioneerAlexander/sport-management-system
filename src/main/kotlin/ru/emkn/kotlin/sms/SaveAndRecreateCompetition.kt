@@ -2,7 +2,6 @@ package ru.emkn.kotlin.sms
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import graphics.compeTition
 import kotlinx.datetime.LocalDate
 import java.io.File
 import java.time.LocalTime

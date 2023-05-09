@@ -23,7 +23,7 @@ import ru.emkn.kotlin.sms.startOnCl
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ImportState(state: MutableState<State>): State {
-    Button(onClick = { state.value = State.ZERO }) { Text(text = "Назад", color = Color.White) }
+    Button(onClick = { state.value = State.ZERO }) { Text(text = "Back", color = Color.White) }
     Column(modifier = Modifier.fillMaxWidth().offset(0.dp, 100.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
 
         TextField(
@@ -32,13 +32,13 @@ fun ImportState(state: MutableState<State>): State {
             }.align(Alignment.CenterHorizontally),
             value = Files.directory.value,
             onValueChange = { Files.directory.value = it },
-            placeholder = { Text("Имя папки для сохранения.") }
+            placeholder = { Text("Folder name for saving results.") }
         )
-        NewFileButton("Файл соревнования", Modifier.align(Alignment.CenterHorizontally).width(300.dp), {
+        NewFileButton("Competition file", Modifier.align(Alignment.CenterHorizontally).width(300.dp), {
             Files.gotEvent.value = true
         }, type = InputFilesType.EVENT)
         NewFileButton(
-            "Все файлы заявок",
+            "All application files",
             Modifier.align(Alignment.CenterHorizontally).width(300.dp),
             {
                 Files.gotApplications.value = true
@@ -59,7 +59,7 @@ fun ImportState(state: MutableState<State>): State {
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(128, 0, 128))
             ) {
                 Text(
-                    text = "Стартовые протоколы",
+                    text = "Start protocols",
                     color = Color.White,
                     fontSize = 20.sp
                 )

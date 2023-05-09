@@ -1,44 +1,48 @@
-# Система для проведения спортивных соревнований
+# Sports Competition Management System
 
-## Описание предметной области
+## Domain description (Full documentation is provided [here](DOCS.md).)
 
-Предположим вам необходимо реализовать систему организации для спортивных соревнований
-в одном из циклических видов спорта: бег, беговые лыжи, плаванье, велоспорт, спортивное ориентирование и т.п.
+Suppose you need to implement an organizational system for sports competitions in one of the cyclic
+sports: running, cross-country skiing, swimming, cycling, orienteering, etc.
 
-В простейшем случае соревнования имеют какое-то название, дату проведения, и подразумевают прохождение 
-каждым спортсменом какой-то одной дистанции.
+In the simplest case, competitions have a name, a date of the event, and imply the passage of some
+distance by each athlete.
 
-Все спортсмены выступают в разных группах в зависимости от пола и возраста. Список групп определяется
-регламентом соревнований и публикуется заранее.
+All athletes perform in different groups depending on gender and age. The list of groups is
+determined by the regulations of the competition and is published in advance.
 
-У каждой группы своя дистанция, при этом у некоторых групп могут быть одинаковые дистанции.
+Each group has its own distance, and some groups may have the same distance.
 
-Спортсмены выступают за разные коллективы, каждый коллектив подаёт заявочные списки, в которых
-указывает для спортсменов фамилию, имя, год рождения, спортивный разряд, желаемую группу.
-Также в заявочных списках указываются данные о медицинском осмотре и страховке от несчастного случая для каждого спортсмена.
+Athletes compete for different teams, each team submits application lists, in which the surname,
+name, year of birth, sports category, and desired group for athletes are indicated. The application
+lists also include information about medical examination and accident insurance for each athlete.
 
-На основании всех заявочных списков для каждой группы формируется протокол старта.
-Протокол формируется в результате жеребьёвки. Каждый спортсмен получает индивидуальный нагрудный номер и время старта.
-Старт может быть общим (в одно время) или раздельным. В простейшем случае жеребьёвка расставляет всех спортсменов в группе в случайном порядке.
-Однако могут быть более сложные виды жеребьёвки, например когда нужно учитывать разряд, учитывать забег внутри группы,
-учитывать одновременный старт разных групп.
+Based on all the application lists, a start protocol is formed for each group. The protocol is
+formed as a result of drawing. Each athlete receives an individual bib number and start time. The
+start can be common (at the same time) or separate. In the simplest case, the drawing places all
+athletes in the group in random order. However, more complex types of drawing can be used, for
+example, when it is necessary to take into account the category, consider the run within the group,
+and take into account the simultaneous start of different groups.
 
-После прохождения соревнований формируется протокол результатов, а также протокол с промежуточными результатами прохождения дистанции.
-Дистанция может состоять из нескольких контрольных пунктов, на каждом из которых фиксируется время прохождения.
-Результат фиксируется либо вручную, либо с помощью одной или нескольких систем электронной отметки.
-Соответственно результат предаётся в систему либо при ручном вводе, либо при получении данных от систем электронной отметки.
-Обычно это или список вида <номер> - <время> для заданного контрольного пункта, или
-список вида <контрольный пункт> - <время> для заданного номера (спортсмена).
+After the competition, a protocol of results is formed, as well as a protocol with intermediate
+results of passing the distance. The distance may consist of several checkpoints, each of which
+records the passing time. The result is recorded manually or with the help of one or several
+electronic marking systems. Accordingly, the result is entered into the system either when manually
+entered or when receiving data from electronic marking systems. Usually, this is either a list of
+the form <number> - <time> for a given checkpoint or a list of the form <checkpoint> - <time> for a
+given number (athlete).
 
-В протоколах старта, финиша и пр. для каждого участника необходимо указать номер, имя, фамилию, год рождения, спортивный разряд, коллектив.
-В стартовом протоколе дополнительно указывается время старта.
-В протоколе результатов указывается итоговое место, результат (время затраченное на прохождение дистанции), Отставание от лидера и (опционально) выполненный спортивный разряд.
-Выполненный спортивный разряд вычисляется по некоторой формуле, которая зависит от вида спорта, группы и регламента конкретных соревнований.
-Кроме протокола результатов для каждой из групп формируется протокол результатов для коллективов.
-При этом по определённой формуле, зависящей от регламента конкретных соревнований, результат каждого спортсмена в его группе
-даёт определённое количество очков, которые в сумме дают результат коллектива.
+In the start, finish, and other protocols, it is necessary to indicate the number, name, surname,
+year of birth, sports category, and team for each participant. In the start protocol, the start time
+is additionally indicated. The protocol of results indicates the final place, the result (the time
+spent on passing the distance), the lag from the leader, and (optionally) the achieved sports
+category. The achieved sports category is calculated using a certain formula, which depends on the
+type of sport, group, and regulations of specific competitions. In addition to the protocol of
+results, a protocol of results for teams is formed for each group. At the same time, according to a
+certain formula, depending on the regulations of specific competitions, the result of each athlete in his/her group
+gives a certain number of points, which together give the result of the team.
 
-Пример заявочного списка (CSV):
+Example of the entry list (CSV):
 
 ```csv
 Выборгский СДЮШСОР №10,,,,,,,
@@ -47,7 +51,7 @@
 Пупкин,Василий,2011,3ю,М10,,
 ```
 
-Пример протокола старта для группы (CSV):
+Example of the start protocol for the group (CSV):
 
 ```csv
 М10,,,,,,
@@ -56,7 +60,7 @@
 243,Смирнов,Сергей,2012,,12:03:00
 ```
 
-Пример протокола прохождения дистанции участником (CSV):
+An example of the protocol of the course participant (CSV):
 
 ```csv
 243,,
@@ -65,7 +69,7 @@
 Finish,12:14:51
 ```
 
-Пример протокола прохождения контрольного пункта (CSV):
+Example of a checkpoint protocol (CSV):
 
 ```csv
 1km,,
@@ -74,7 +78,7 @@ Finish,12:14:51
 243,12:06:15
 ```
 
-Пример протокола результатов (CSV):
+Example of the result protocol (CSV):
 
 ```csv
 М10,,,,,,,
@@ -82,28 +86,4 @@ Finish,12:14:51
 2,243,Смирнов,Сергей,2012,,00:12:57,
 3,241,Пупкин,Василий,2011,3ю,00:13:15
 ```
-
-## Задание
-
-Программа должна:
-
-1. По заявочным спискам формировать стартовые протоколы. Использовать простую жеребьёвку с интервалом 1 минута и началом старта в 12:00:00.
-2. По стартовым протоколам и протоколам прохождения контрольных пунктов формировать протоколы результатов.
-3. По протоколам результатов формировать протокол результатов для команд. Очки вычислять по формуле max(0, 100 * (2 - <результат>/<результат победителя>)).
-4. Проверять корректность заявочных списков.
-5. Проверять корректность прохождения контрольных пунктов каждым из участников.
-6. Писать лог
-
-Кроме того нужно:
-1. Создать файл DOCS.md с инструкциями по использованию программы
-2. Написать тесты (понадобится генераторы заявок, результатов и т.п.)
-
-## Общие замечания
-
-1. Библиотеки удобно искать на https://kotlin.link. Вам могут пригодиться библиотеки для логирования, разбора аргументов командно строки, 
-работы с конфигурационными файлами (например, https://github.com/sksamuel/hoplite), чтения/записи csv (например, https://github.com/doyaaaaaken/kotlin-csv) и т.п.
-2. Предполагается, что описание соревнований и дистанции определены заранее в некотором конфигурационном файле. 
-3. Система работает с файлами, подумайте как структурировать их расположение на диске - не стоит хранить всё в одной случайной папке.
-4. Система будет развиваться и изменяться. Постарайтесь построить объектную модель, которую будет удобно расширять. При этом не надо слишком увлекаться, 
-поскольку пока вам неизвестно куда пойдёт развитие. Ищите баланс ⚖!  
 
